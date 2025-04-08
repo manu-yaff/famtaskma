@@ -17,18 +17,21 @@ export class AuthService {
   ) {}
 
   public async signin(dto: SigninDto): Promise<Record<string, string>> {
-    const user = await this.usersService.findOne(dto.email);
+    try {
+      const user = await this.usersService.findOneByEmail(dto.email);
+      const passwordMatch = await bcrypt.compare(dto.password, user.password);
 
-    const passwordMatch = await bcrypt.compare(dto.password, user.password);
+      if (!passwordMatch) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
 
-    if (!passwordMatch) {
+      const payload: JwtPayload = { sub: user.id, email: user.email };
+
+      return {
+        accessToken: await this.jwtService.signAsync(payload),
+      };
+    } catch {
       throw new UnauthorizedException();
     }
-
-    const payload: JwtPayload = { sub: user.id, email: user.email };
-
-    return {
-      accessToken: await this.jwtService.signAsync(payload),
-    };
   }
 }

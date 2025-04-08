@@ -55,7 +55,7 @@ export class UsersService {
     }
   }
 
-  public async findOne(email: string): Promise<User> {
+  public async findOneByEmail(email: string): Promise<User> {
     const user = await this.usersRepository.findOneBy({ email });
 
     if (user === null) throw new NotFoundException();
