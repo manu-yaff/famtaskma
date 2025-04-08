@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from 'src/modules/auth/auth.service';
 import { Public } from 'src/modules/auth/decorators/public.decorator';
 import { SigninDto } from 'src/modules/auth/dto/signin-input';
@@ -7,6 +7,7 @@ import { SigninDto } from 'src/modules/auth/dto/signin-input';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @HttpCode(HttpStatus.OK)
   @Public()
   @Post('/login')
   public signin(@Body() dto: SigninDto) {

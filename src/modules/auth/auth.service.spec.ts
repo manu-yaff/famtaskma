@@ -83,8 +83,8 @@ describe(AuthService.name, () => {
     it(`should throw ${UnauthorizedException.name} when user is not found`, async () => {
       // Arrange
       const payload: SigninDto = {
-        email: '',
-        password: '',
+        email: 'jonh@gmail.com',
+        password: 'secret',
       };
 
       jest

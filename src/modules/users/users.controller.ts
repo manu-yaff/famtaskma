@@ -5,6 +5,7 @@ import {
   Post,
   UseInterceptors,
 } from '@nestjs/common';
+import { Public } from 'src/modules/auth/decorators/public.decorator';
 import { CreateUserDto } from 'src/modules/users/dto/create-user.input';
 import { UsersService } from 'src/modules/users/users.service';
 
@@ -13,6 +14,7 @@ import { UsersService } from 'src/modules/users/users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Public()
   @Post('/register')
   public createUser(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
