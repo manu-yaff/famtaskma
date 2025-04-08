@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from 'src/modules/users/dto/create-user.input';
@@ -14,7 +19,7 @@ export class UserUnexpectedError extends Error {
 export class EmailAlreadyInUseError extends HttpException {
   constructor(message: string) {
     super(
-      { status: HttpStatus.CONFLICT, error: 'Email already exists' },
+      { status: HttpStatus.CONFLICT, error: 'Email already in use' },
       HttpStatus.CONFLICT,
       { cause: message },
     );
@@ -29,12 +34,12 @@ export class UsersService {
 
   public async create(createUserInput: CreateUserDto): Promise<User> {
     const salt = await bcrypt.genSalt();
-    const hashed_password = await bcrypt.hash(createUserInput.password, salt);
+    const hashedPassword = await bcrypt.hash(createUserInput.password, salt);
 
     const newUser = this.usersRepository.create({
       name: createUserInput.name,
       email: createUserInput.email,
-      password: hashed_password,
+      password: hashedPassword,
     });
 
     try {
@@ -48,5 +53,13 @@ export class UsersService {
 
       throw new UserUnexpectedError((error as Error).message);
     }
+  }
+
+  public async findOne(email: string): Promise<User> {
+    const user = await this.usersRepository.findOneBy({ email });
+
+    if (user === null) throw new NotFoundException();
+
+    return user;
   }
 }
