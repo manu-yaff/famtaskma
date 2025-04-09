@@ -52,6 +52,9 @@ describe(AuthController.name, () => {
   });
 
   describe(AuthController.prototype.signin.name, () => {
+    const loginEndpoint = '/auth/login';
+    const registerEndpoint = '/auth/register';
+
     it(`should throw ${UnauthorizedException.name} when user does not exist`, async () => {
       // Arrange
       const payload: SigninDto = {
@@ -61,7 +64,7 @@ describe(AuthController.name, () => {
 
       // Act
       const response = await request(nestServer)
-        .post('/auth/login')
+        .post(loginEndpoint)
         .send(payload);
 
       // Assert
@@ -76,11 +79,11 @@ describe(AuthController.name, () => {
         password: createUserDto.password,
       };
 
-      await request(nestServer).post('/users/register').send(createUserDto);
+      await request(nestServer).post(registerEndpoint).send(createUserDto);
 
       // Act
       const response = await request(nestServer)
-        .post('/auth/login')
+        .post(loginEndpoint)
         .send(userCredentials);
 
       const body = response.body as Record<string, string>;
@@ -112,7 +115,85 @@ describe(AuthController.name, () => {
 
         // Act
         const response = await request(nestServer)
-          .post('/auth/login')
+          .post(loginEndpoint)
+          .send(payload);
+
+        // Assert
+        expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+      });
+    });
+  });
+
+  describe(AuthController.prototype.register.name, () => {
+    const registerEndpoint = `/auth/register`;
+
+    it(`should return ${HttpStatus.CREATED} when user is created`, async () => {
+      // Arrange
+      const payload = getCreateUserDto();
+
+      // Act
+      const response = await request(nestServer)
+        .post(registerEndpoint)
+        .send(payload);
+
+      const body = response.body as User;
+
+      // Assert
+      expect(response.status).toBe(HttpStatus.CREATED);
+      expect(body.name).toBe(payload.name);
+      expect(body.email).toBe(payload.email);
+      expect(body).not.toHaveProperty('password');
+    });
+
+    it(`should return ${HttpStatus.CONFLICT} when user email already exists`, async () => {
+      // Arrange
+      const payload = getCreateUserDto();
+
+      // Act
+      await request(nestServer).post(registerEndpoint).send(payload);
+
+      const secondResponse = await request(nestServer)
+        .post(registerEndpoint)
+        .send(payload);
+
+      // Assert
+      expect(secondResponse.status).toBe(HttpStatus.CONFLICT);
+    });
+
+    describe(`Invalid fields`, () => {
+      it(`should return ${HttpStatus.BAD_REQUEST} when password is missing`, async () => {
+        // Arrange
+        const payload = getCreateUserDto({ password: undefined });
+
+        // Act
+        const response = await request(nestServer)
+          .post(registerEndpoint)
+          .send(payload);
+
+        // Assert
+        expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+      });
+
+      it(`should return ${HttpStatus.BAD_REQUEST} when email is missing`, async () => {
+        // Arrange
+        const payload = getCreateUserDto({ email: undefined });
+
+        // Act
+        const response = await request(nestServer)
+          .post(registerEndpoint)
+          .send(payload);
+
+        // Assert
+        expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+      });
+
+      it(`should return ${HttpStatus.BAD_REQUEST} when name is missing`, async () => {
+        // Arrange
+        const payload = getCreateUserDto({ name: undefined });
+
+        // Act
+        const response = await request(nestServer)
+          .post(registerEndpoint)
           .send(payload);
 
         // Assert

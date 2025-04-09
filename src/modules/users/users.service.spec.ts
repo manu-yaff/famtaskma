@@ -1,14 +1,14 @@
+import {
+  ConflictException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from 'src/modules/users/entities/user.entity';
 import { getCreateUserDto } from 'src/modules/users/mocks/create-user.input.mock';
 import { getUserRepositoryMock } from 'src/modules/users/mocks/users.repository.mock';
-import {
-  EmailAlreadyInUseError,
-  UsersService,
-  UserUnexpectedError,
-} from 'src/modules/users/users.service';
+import { UsersService } from 'src/modules/users/users.service';
 import { QueryFailedError, Repository } from 'typeorm';
 
 jest.mock('bcrypt');
@@ -43,7 +43,7 @@ describe(UsersService.name, () => {
   });
 
   describe(UsersService.prototype.create.name, () => {
-    it(`should throw ${EmailAlreadyInUseError.name} when email has already been used`, async () => {
+    it(`should throw ${ConflictException.name} when email has already been used`, async () => {
       // Arrange
       const createUserDto = getCreateUserDto();
       const driverError = new Error(
@@ -60,10 +60,10 @@ describe(UsersService.name, () => {
       const promise = service.create(createUserDto);
 
       // Assert
-      await expect(promise).rejects.toThrow(EmailAlreadyInUseError);
+      await expect(promise).rejects.toThrow(ConflictException);
     });
 
-    it(`should throw ${UserUnexpectedError.name} when unknown error ocurrs`, async () => {
+    it(`should throw ${InternalServerErrorException.name} when unknown error ocurrs`, async () => {
       // Arrange
       const createUserDto = getCreateUserDto();
       const errorMock = new Error('Unknown error');
@@ -74,7 +74,7 @@ describe(UsersService.name, () => {
       const promise = service.create(createUserDto);
 
       // Assert
-      await expect(promise).rejects.toThrow(UserUnexpectedError);
+      await expect(promise).rejects.toThrow(InternalServerErrorException);
     });
 
     it('should create user', async () => {

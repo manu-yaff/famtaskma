@@ -1,7 +1,7 @@
 import {
-  HttpException,
-  HttpStatus,
+  ConflictException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,22 +9,6 @@ import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from 'src/modules/users/dto/create-user.input';
 import { User } from 'src/modules/users/entities/user.entity';
 import { QueryFailedError, Repository } from 'typeorm';
-
-export class UserUnexpectedError extends Error {
-  constructor(message: string) {
-    super(message);
-  }
-}
-
-export class EmailAlreadyInUseError extends HttpException {
-  constructor(message: string) {
-    super(
-      { status: HttpStatus.CONFLICT, error: 'Email already in use' },
-      HttpStatus.CONFLICT,
-      { cause: message },
-    );
-  }
-}
 
 @Injectable()
 export class UsersService {
@@ -47,11 +31,11 @@ export class UsersService {
     } catch (error: unknown) {
       if (error instanceof QueryFailedError) {
         if ((error.driverError as { code: string }).code) {
-          throw new EmailAlreadyInUseError(error.message);
+          throw new ConflictException('Email already in use');
         }
       }
 
-      throw new UserUnexpectedError((error as Error).message);
+      throw new InternalServerErrorException('User: unexpected error');
     }
   }
 
