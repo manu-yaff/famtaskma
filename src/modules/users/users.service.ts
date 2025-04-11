@@ -31,6 +31,7 @@ export class UsersService {
     } catch (error: unknown) {
       if (error instanceof QueryFailedError) {
         if ((error.driverError as { code: string }).code) {
+          // TODO as error code here
           throw new ConflictException('Email already in use');
         }
       }
