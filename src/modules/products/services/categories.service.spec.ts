@@ -2,14 +2,12 @@ import { faker } from '@faker-js/faker/.';
 import { ConflictException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { TyperomDuplicatedKeyErrorCode } from 'src/contants';
+import { TyperomDuplicatedKeyErrorCode } from 'src/constants';
 import { CreateCategoryDto } from 'src/modules/products/dto/create-category.input';
 import { Category } from 'src/modules/products/entities/category.entity';
-import {
-  getCategoriesRepositoryMock,
-  MockType,
-} from 'src/modules/products/mocks/categories.repository.mock';
+import { getCategoriesRepositoryMock } from 'src/modules/products/mocks/categories.repository.mock';
 import { getCategoryMock } from 'src/modules/products/mocks/category.entity.mock';
+import { MockType } from 'src/modules/products/mocks/mock.type';
 import { CategoriesService } from 'src/modules/products/services/categories.service';
 import { QueryFailedError, Repository } from 'typeorm';
 

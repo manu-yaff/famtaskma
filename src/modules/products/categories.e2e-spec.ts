@@ -45,11 +45,11 @@ describe(CategoriesController.name, () => {
   });
 
   beforeEach(async () => {
-    await repository.clear();
+    await repository.delete({});
   });
 
   afterAll(async () => {
-    await repository.clear();
+    await repository.delete({});
     await app.close();
   });
 
