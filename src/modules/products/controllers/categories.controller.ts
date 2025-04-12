@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { Public } from 'src/modules/auth/decorators/public.decorator';
-import { CreateCategoryDto } from 'src/modules/products/dto/create-category.input';
+import { CreateCategoryDto } from 'src/modules/products/dto/create-category-input.dto';
 import { CategoriesService } from 'src/modules/products/services/categories.service';
 
 @Controller('categories')

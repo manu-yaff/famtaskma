@@ -3,7 +3,7 @@ import { ConflictException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { TyperomDuplicatedKeyErrorCode } from 'src/constants';
-import { CreateCategoryDto } from 'src/modules/products/dto/create-category.input';
+import { CreateCategoryDto } from 'src/modules/products/dto/create-category-input.dto';
 import { Category } from 'src/modules/products/entities/category.entity';
 import { getCategoriesRepositoryMock } from 'src/modules/products/mocks/categories.repository.mock';
 import { getCategoryMock } from 'src/modules/products/mocks/category.entity.mock';

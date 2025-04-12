@@ -10,7 +10,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import * as http from 'node:http';
 import { DatabaseConfigModule } from 'src/database/database.module';
 import { CategoriesController } from 'src/modules/products/controllers/categories.controller';
-import { CreateCategoryDto } from 'src/modules/products/dto/create-category.input';
+import { CreateCategoryDto } from 'src/modules/products/dto/create-category-input.dto';
 import { Category } from 'src/modules/products/entities/category.entity';
 import { getCategoryMock } from 'src/modules/products/mocks/category.entity.mock';
 import { ProductsModule } from 'src/modules/products/products.module';

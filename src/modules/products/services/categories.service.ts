@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TyperomDuplicatedKeyErrorCode } from 'src/constants';
-import { CreateCategoryDto } from 'src/modules/products/dto/create-category.input';
+import { CreateCategoryDto } from 'src/modules/products/dto/create-category-input.dto';
 import { Category } from 'src/modules/products/entities/category.entity';
 import { QueryFailedError, Repository } from 'typeorm';
 
