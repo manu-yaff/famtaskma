@@ -11,7 +11,7 @@ import * as http from 'node:http';
 import { DatabaseConfigModule } from 'src/database/database.module';
 import { AuthController } from 'src/modules/auth/auth.controller';
 import { AuthModule } from 'src/modules/auth/auth.module';
-import { SigninDto } from 'src/modules/auth/dto/signin-input';
+import { SigninInputDto } from 'src/modules/auth/dto/signin-input.dto';
 import { User } from 'src/modules/users/entities/user.entity';
 import { getCreateUserDto } from 'src/modules/users/mocks/create-user.input.mock';
 import { UsersModule } from 'src/modules/users/users.module';
@@ -57,7 +57,7 @@ describe(AuthController.name, () => {
 
     it(`should throw ${UnauthorizedException.name} when user does not exist`, async () => {
       // Arrange
-      const payload: SigninDto = {
+      const payload: SigninInputDto = {
         email: 'jonh@gmail.com',
         password: 'secret-pass',
       };
@@ -71,7 +71,7 @@ describe(AuthController.name, () => {
       expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
     });
 
-    it(`should return auth token when user logins correclty`, async () => {
+    it(`should return auth token when user logins correctly`, async () => {
       // Arrange
       const createUserDto = getCreateUserDto();
       const userCredentials = {

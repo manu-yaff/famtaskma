@@ -9,8 +9,8 @@ import {
 } from '@nestjs/common';
 import { AuthService } from 'src/modules/auth/auth.service';
 import { Public } from 'src/modules/auth/decorators/public.decorator';
-import { SigninDto } from 'src/modules/auth/dto/signin-input';
-import { CreateUserDto } from 'src/modules/users/dto/create-user.input';
+import { SigninInputDto } from 'src/modules/auth/dto/signin-input.dto';
+import { CreateUserDto } from 'src/modules/users/dto/create-user-input.dto';
 import { UsersService } from 'src/modules/users/users.service';
 
 @UseInterceptors(ClassSerializerInterceptor)
@@ -24,7 +24,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Public()
   @Post('/login')
-  public signin(@Body() dto: SigninDto) {
+  public signin(@Body() dto: SigninInputDto) {
     return this.authService.signin(dto);
   }
 

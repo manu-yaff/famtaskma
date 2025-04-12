@@ -1,4 +1,4 @@
-import { CreateUserDto } from 'src/modules/users/dto/create-user.input';
+import { CreateUserDto } from 'src/modules/users/dto/create-user-input.dto';
 
 export function getCreateUserDto(
   overrides?: Partial<CreateUserDto>,

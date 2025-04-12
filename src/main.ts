@@ -1,10 +1,21 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpExceptionFilter } from 'src/shared/exception-filter';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const docsConfig = new DocumentBuilder()
+    .setTitle('Famtaskma docs')
+    .setDescription('Famtaskma Rest API')
+    .build();
+
+  const documentFactory = () => SwaggerModule.createDocument(app, docsConfig);
+  const docsPath = 'api';
+
+  SwaggerModule.setup(docsPath, app, documentFactory);
 
   const logger = new Logger();
 

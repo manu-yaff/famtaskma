@@ -6,7 +6,8 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { CreateUserDto } from 'src/modules/users/dto/create-user.input';
+import { SignupResponseDto } from 'src/modules/auth/dto/signup-response.dto';
+import { CreateUserDto } from 'src/modules/users/dto/create-user-input.dto';
 import { User } from 'src/modules/users/entities/user.entity';
 import { QueryFailedError, Repository } from 'typeorm';
 
@@ -16,7 +17,9 @@ export class UsersService {
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
   ) {}
 
-  public async create(createUserInput: CreateUserDto): Promise<User> {
+  public async create(
+    createUserInput: CreateUserDto,
+  ): Promise<SignupResponseDto> {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(createUserInput.password, salt);
 

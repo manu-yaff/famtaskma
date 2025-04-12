@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
 import { AuthService } from 'src/modules/auth/auth.service';
-import { SigninDto } from 'src/modules/auth/dto/signin-input';
+import { SigninInputDto } from 'src/modules/auth/dto/signin-input.dto';
 import { getJwtServiceMock } from 'src/modules/auth/mocks/jwt.service.mock';
 import { getUserEntityMock } from 'src/modules/users/mocks/user.entity.mock';
 import { getUsersServiceMock } from 'src/modules/users/mocks/users.service.mock';
@@ -43,7 +43,7 @@ describe(AuthService.name, () => {
       // Arrange
       const jwtTokenMock = 'jwt-token';
       const userMock = getUserEntityMock();
-      const payload: SigninDto = {
+      const payload: SigninInputDto = {
         email: 'jonh@gmail.com',
         password: 'jonh@gmail.com',
       };
@@ -64,7 +64,7 @@ describe(AuthService.name, () => {
       // Arrange
       const userMock = getUserEntityMock();
 
-      const payload: SigninDto = {
+      const payload: SigninInputDto = {
         email: 'jonh@gmail.com',
         password: 'secret-password',
       };
@@ -82,7 +82,7 @@ describe(AuthService.name, () => {
 
     it(`should throw ${UnauthorizedException.name} when user is not found`, async () => {
       // Arrange
-      const payload: SigninDto = {
+      const payload: SigninInputDto = {
         email: 'jonh@gmail.com',
         password: 'secret',
       };
