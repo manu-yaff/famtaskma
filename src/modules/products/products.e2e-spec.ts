@@ -11,7 +11,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import * as http from 'node:http';
 import { DatabaseConfigModule } from 'src/database/database.module';
 import { ProductsController } from 'src/modules/products/controllers/products.controller';
-import { CreateProductDto } from 'src/modules/products/dto/create-product.input';
+import { CreateProductDto } from 'src/modules/products/dto/create-product-input.dto';
 import { Category } from 'src/modules/products/entities/category.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 import { getProductMock } from 'src/modules/products/mocks/product.entity.mock';

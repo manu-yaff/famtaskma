@@ -10,6 +10,7 @@ async function bootstrap() {
   const docsConfig = new DocumentBuilder()
     .setTitle('Famtaskma docs')
     .setDescription('Famtaskma Rest API')
+    .addBearerAuth()
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(app, docsConfig);
