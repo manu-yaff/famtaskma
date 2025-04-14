@@ -1,5 +1,5 @@
 import { Product } from 'src/modules/products/entities/product.entity';
-import { MockType } from 'src/modules/products/mocks/mock.type';
+import { MockType } from 'src/shared/test/mock.type';
 import { Repository } from 'typeorm';
 
 export function getProductsRepositoryMock(): MockType<Repository<Product>> {

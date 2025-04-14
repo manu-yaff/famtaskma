@@ -1,8 +1,10 @@
 import { Exclude } from 'class-transformer';
+import { ShoppingList } from 'src/modules/products/entities/shopping-list.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -51,4 +53,7 @@ export class User {
    */
   @UpdateDateColumn({ nullable: false })
   updatedAt: Date;
+
+  @ManyToMany(() => ShoppingList)
+  shoppingLists: ShoppingList[];
 }

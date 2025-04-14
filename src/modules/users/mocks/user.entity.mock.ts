@@ -8,6 +8,7 @@ export function getUserEntityMock(overrides?: Partial<User>): User {
     password: '',
     createdAt: new Date(),
     updatedAt: new Date(),
+    shoppingLists: [],
     ...overrides,
   };
 }

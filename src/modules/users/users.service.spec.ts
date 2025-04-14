@@ -88,6 +88,7 @@ describe(UsersService.name, () => {
         password: hashedPasswordMock,
         createdAt: new Date(),
         updatedAt: new Date(),
+        shoppingLists: [],
       };
 
       const hashMock = (

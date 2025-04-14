@@ -43,6 +43,14 @@ export class UsersService {
     }
   }
 
+  public async findOne(id: string): Promise<User> {
+    const user = await this.usersRepository.findOneBy({ id });
+
+    if (user === null) throw new NotFoundException();
+
+    return user;
+  }
+
   public async findOneByEmail(email: string): Promise<User> {
     const user = await this.usersRepository.findOneBy({ email });
 

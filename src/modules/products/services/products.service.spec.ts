@@ -3,10 +3,10 @@ import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CreateProductDto } from 'src/modules/products/dto/create-product-input.dto';
 import { Product } from 'src/modules/products/entities/product.entity';
-import { MockType } from 'src/modules/products/mocks/mock.type';
 import { getProductMock } from 'src/modules/products/mocks/product.entity.mock';
 import { getProductsRepositoryMock } from 'src/modules/products/mocks/products.repository.mock';
 import { ProductsService } from 'src/modules/products/services/products.service';
+import { MockType } from 'src/shared/test/mock.type';
 import { Repository } from 'typeorm';
 
 const PRODUCTS_REPOSITORY_TOKEN = getRepositoryToken(Product);

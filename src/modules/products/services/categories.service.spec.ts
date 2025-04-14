@@ -7,8 +7,8 @@ import { CreateCategoryDto } from 'src/modules/products/dto/create-category-inpu
 import { Category } from 'src/modules/products/entities/category.entity';
 import { getCategoriesRepositoryMock } from 'src/modules/products/mocks/categories.repository.mock';
 import { getCategoryMock } from 'src/modules/products/mocks/category.entity.mock';
-import { MockType } from 'src/modules/products/mocks/mock.type';
 import { CategoriesService } from 'src/modules/products/services/categories.service';
+import { MockType } from 'src/shared/test/mock.type';
 import { QueryFailedError, Repository } from 'typeorm';
 
 const CATEGORIES_REPOSITORY_TOKEN = getRepositoryToken(Category);

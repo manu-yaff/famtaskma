@@ -19,6 +19,7 @@ export class AuthService {
 
   public async signin(dto: SigninInputDto): Promise<SigninResponseDto> {
     try {
+      // TODO: handle validation when user does not exist
       const user = await this.usersService.findOneByEmail(dto.email);
       const passwordMatch = await bcrypt.compare(dto.password, user.password);
 
