@@ -1,15 +1,14 @@
-import {
-  ConflictException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { faker } from '@faker-js/faker/.';
+import { InternalServerErrorException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import * as bcrypt from 'bcrypt';
 import { User } from 'src/modules/users/entities/user.entity';
 import { getCreateUserDto } from 'src/modules/users/mocks/create-user.input.mock';
+import { getUserEntityMock } from 'src/modules/users/mocks/user.entity.mock';
 import { getUserRepositoryMock } from 'src/modules/users/mocks/users.repository.mock';
 import { UsersService } from 'src/modules/users/users.service';
-import { QueryFailedError, Repository } from 'typeorm';
+import { MockType } from 'src/shared/test/mock.type';
+import { EntityNotFoundError, Repository } from 'typeorm';
 
 jest.mock('bcrypt');
 
@@ -17,7 +16,7 @@ const REPOSITORY_TOKEN = getRepositoryToken(User);
 
 describe(UsersService.name, () => {
   let service: UsersService;
-  let repository: Partial<jest.Mocked<Repository<User>>>;
+  let repository: MockType<Repository<User>>;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -43,27 +42,7 @@ describe(UsersService.name, () => {
   });
 
   describe(UsersService.prototype.create.name, () => {
-    it(`should throw ${ConflictException.name} when email has already been used`, async () => {
-      // Arrange
-      const createUserDto = getCreateUserDto();
-      const driverError = new Error(
-        'duplicate key value violates unique constraint',
-      ) as Error & { code: string };
-
-      driverError.code = '23505';
-
-      jest
-        .spyOn(repository, 'save')
-        .mockRejectedValue(new QueryFailedError('', [], driverError));
-
-      // Act
-      const promise = service.create(createUserDto);
-
-      // Assert
-      await expect(promise).rejects.toThrow(ConflictException);
-    });
-
-    it(`should throw ${InternalServerErrorException.name} when unknown error ocurrs`, async () => {
+    it(`should throw ${InternalServerErrorException.name} when unknown error occurs`, async () => {
       // Arrange
       const createUserDto = getCreateUserDto();
       const errorMock = new Error('Unknown error');
@@ -80,20 +59,7 @@ describe(UsersService.name, () => {
     it('should create user', async () => {
       // Arrange
       const createUserDto = getCreateUserDto();
-      const hashedPasswordMock = '$hash$password$$$';
-      const newUserMock: User = {
-        id: '10',
-        name: createUserDto.name,
-        email: createUserDto.email,
-        password: hashedPasswordMock,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        shoppingLists: [],
-      };
-
-      const hashMock = (
-        jest.spyOn(bcrypt, 'hash') as jest.Mock
-      ).mockResolvedValue(hashedPasswordMock);
+      const newUserMock = getUserEntityMock();
 
       jest.spyOn(repository, 'save').mockResolvedValue(newUserMock);
 
@@ -102,12 +68,73 @@ describe(UsersService.name, () => {
 
       // Assert
       expect(result).toEqual(newUserMock);
-      expect(repository.create).toHaveBeenCalledWith({
-        name: newUserMock.name,
-        email: newUserMock.email,
-        password: hashedPasswordMock,
+      expect(repository.save).toHaveBeenCalledWith({
+        name: createUserDto.name,
+        email: createUserDto.email,
+        password: createUserDto.password,
       });
-      expect(hashMock).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe(UsersService.prototype.findOneByEmailOrFail.name, () => {
+    it('should find user by email', async () => {
+      // Arrange
+      const emailMock = faker.internet.email();
+
+      // Act
+      await service.findOneByEmailOrFail(emailMock);
+
+      // Assert
+      expect(repository.findOneByOrFail).toHaveBeenCalledWith({
+        email: emailMock,
+      });
+    });
+
+    it('should throw if user is not found', async () => {
+      // Arrange
+      const emailMock = faker.internet.email();
+      const notFoundError = new EntityNotFoundError(User, { email: emailMock });
+
+      jest
+        .spyOn(repository, 'findOneByOrFail')
+        .mockRejectedValue(notFoundError);
+
+      // Act
+      const promise = service.findOneByEmailOrFail(emailMock);
+
+      // Assert
+      await expect(promise).rejects.toThrow();
+    });
+  });
+
+  describe(UsersService.prototype.findOneByIdOrFail.name, () => {
+    it('should find user by id', async () => {
+      // Arrange
+      const idMock = faker.string.uuid();
+
+      // Act
+      await service.findOneByIdOrFail(idMock);
+
+      // Assert
+      expect(repository.findOneByOrFail).toHaveBeenCalledWith({
+        id: idMock,
+      });
+    });
+
+    it('should throw if user is not found', async () => {
+      // Arrange
+      const idMock = faker.string.uuid();
+      const notFoundError = new EntityNotFoundError(User, { id: idMock });
+
+      jest
+        .spyOn(repository, 'findOneByOrFail')
+        .mockRejectedValue(notFoundError);
+
+      // Act
+      const promise = service.findOneByEmailOrFail(idMock);
+
+      // Assert
+      await expect(promise).rejects.toThrow();
     });
   });
 });

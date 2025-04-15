@@ -1,18 +1,28 @@
 import { faker } from '@faker-js/faker/.';
-import { NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
+import { TyperomDuplicatedKeyErrorCode } from 'src/constants';
 import { AuthService } from 'src/modules/auth/auth.service';
 import { SigninInputDto } from 'src/modules/auth/dto/signin-input.dto';
 import { getJwtServiceMock } from 'src/modules/auth/mocks/jwt.service.mock';
+import { CreateUserDto } from 'src/modules/users/dto/create-user-input.dto';
+import { getCreateUserDto } from 'src/modules/users/mocks/create-user.input.mock';
 import { getUserEntityMock } from 'src/modules/users/mocks/user.entity.mock';
 import { getUsersServiceMock } from 'src/modules/users/mocks/users.service.mock';
 import { UsersService } from 'src/modules/users/users.service';
+import { PostgresDriverError } from 'src/shared/exception-mapper';
+import { MockType } from 'src/shared/test/mock.type';
+import { QueryFailedError } from 'typeorm';
 
 describe(AuthService.name, () => {
   let authService: AuthService;
-  let usersService: UsersService;
+  let usersService: MockType<UsersService>;
   let jwtService: JwtService;
 
   beforeEach(async () => {
@@ -31,7 +41,7 @@ describe(AuthService.name, () => {
     }).compile();
 
     authService = moduleRef.get<AuthService>(AuthService);
-    usersService = moduleRef.get<UsersService>(UsersService);
+    usersService = moduleRef.get(UsersService);
     jwtService = moduleRef.get<JwtService>(JwtService);
   });
 
@@ -102,6 +112,57 @@ describe(AuthService.name, () => {
 
       // Assert
       await expect(() => promise).rejects.toThrow(UnauthorizedException);
+    });
+  });
+
+  describe(AuthService.prototype.signup.name, () => {
+    it(`should throw ${ConflictException.name} when email has already been used`, async () => {
+      // Arrange
+      const createUserDto = getCreateUserDto();
+
+      const errorMock = new QueryFailedError<PostgresDriverError>(
+        'INSERT INTO...',
+        [],
+        {
+          name: 'QueryFailedError',
+          message: 'duplicate key value violates unique constraint ...',
+          code: TyperomDuplicatedKeyErrorCode,
+          detail: 'Key (email) already exists',
+        },
+      );
+
+      jest.spyOn(usersService, 'create').mockRejectedValue(errorMock);
+
+      // Act
+      const promise = authService.signup(createUserDto);
+
+      // Assert
+      await expect(promise).rejects.toThrow(ConflictException);
+    });
+
+    it('should create user with hashed password', async () => {
+      // Arrange
+      const payload: CreateUserDto = {
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+        name: faker.person.fullName(),
+      };
+
+      const hashedPassword = faker.internet.password().toLocaleUpperCase();
+
+      (jest.spyOn(bcrypt, 'hash') as jest.Mock).mockResolvedValue(
+        hashedPassword,
+      );
+
+      // Act
+      await authService.signup(payload);
+
+      // Assert
+      expect(usersService.create).toHaveBeenCalledWith({
+        email: payload.email,
+        name: payload.name,
+        password: hashedPassword,
+      });
     });
   });
 });

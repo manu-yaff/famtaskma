@@ -6,5 +6,6 @@ export function getUserRepositoryMock(): MockType<Repository<User>> {
   return {
     create: jest.fn(),
     save: jest.fn(),
+    findOneByOrFail: jest.fn(),
   };
 }
