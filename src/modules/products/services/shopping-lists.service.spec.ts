@@ -10,11 +10,12 @@ import { ShoppingList } from 'src/modules/products/entities/shopping-list.entity
 import { getShoppingListEntityMock } from 'src/modules/products/mocks/shopping-list.entity.mock';
 import { getShoppingListsRepositoryMock } from 'src/modules/products/mocks/shopping-list.repository.mock';
 import { ShoppingListsService } from 'src/modules/products/services/shopping-lists.service';
+import { User } from 'src/modules/users/entities/user.entity';
 import { getUserEntityMock } from 'src/modules/users/mocks/user.entity.mock';
 import { getUsersServiceMock } from 'src/modules/users/mocks/users.service.mock';
 import { UsersService } from 'src/modules/users/users.service';
 import { MockType } from 'src/shared/test/mock.type';
-import { QueryFailedError, Repository } from 'typeorm';
+import { EntityNotFoundError, Repository } from 'typeorm';
 
 const SHOPPING_LISTS_REPOSITORY_TOKEN = getRepositoryToken(ShoppingList);
 
@@ -58,7 +59,7 @@ describe(ShoppingListsService.name, () => {
         .spyOn(shoppingListsRepository, 'save')
         .mockReturnValue(shoppingListMock);
 
-      jest.spyOn(usersService, 'findOne').mockResolvedValue(userMock);
+      jest.spyOn(usersService, 'findOneByIdOrFail').mockResolvedValue(userMock);
 
       // Act
       await shoppingListsService.create(payload);
@@ -90,7 +91,7 @@ describe(ShoppingListsService.name, () => {
       expect(result).toBe(shoppingListMock);
     });
 
-    it(`should throw when a ${QueryFailedError.name} occurs`, async () => {
+    it(`should throw ${InternalServerErrorException.name} when unknown error occurs`, async () => {
       // Arrange
       const payload: CreateShoppingListDto = {
         name: faker.word.words(),
@@ -110,18 +111,21 @@ describe(ShoppingListsService.name, () => {
       await expect(promise).rejects.toThrow(InternalServerErrorException);
     });
 
-    it('should throw when user is not found', async () => {
+    it(`should throw ${NotFoundException.name} when given user id is not found`, async () => {
       // Arrange
       const payload: CreateShoppingListDto = {
         name: faker.word.words(),
         userId: faker.string.uuid(),
       };
 
-      const userNotFoundExceptionMock = new NotFoundException();
+      const userNotFoundExceptionMock = new EntityNotFoundError(User, {
+        id: payload.userId,
+      });
+
       const shoppingListMock = getShoppingListEntityMock();
 
       jest
-        .spyOn(usersService, 'findOne')
+        .spyOn(usersService, 'findOneByIdOrFail')
         .mockRejectedValue(userNotFoundExceptionMock);
 
       jest
@@ -132,7 +136,7 @@ describe(ShoppingListsService.name, () => {
       const promise = shoppingListsService.create(payload);
 
       // Assert
-      await expect(promise).rejects.toThrow(userNotFoundExceptionMock);
+      await expect(promise).rejects.toThrow(NotFoundException);
     });
   });
 });
