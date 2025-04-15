@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker/.';
 import { NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
@@ -41,16 +42,19 @@ describe(AuthService.name, () => {
   describe(AuthService.prototype.signin.name, () => {
     it('should return auth token when user is authenticated correctly', async () => {
       // Arrange
-      const jwtTokenMock = 'jwt-token';
+      const jwtTokenMock = faker.internet.jwt();
       const userMock = getUserEntityMock();
       const payload: SigninInputDto = {
-        email: 'jonh@gmail.com',
-        password: 'jonh@gmail.com',
+        email: userMock.email,
+        password: userMock.password,
       };
 
-      jest.spyOn(jwtService, 'signAsync').mockResolvedValue(jwtTokenMock);
-      jest.spyOn(usersService, 'findOneByEmail').mockResolvedValue(userMock);
       (jest.spyOn(bcrypt, 'compare') as jest.Mock).mockResolvedValue(true);
+
+      jest.spyOn(jwtService, 'signAsync').mockResolvedValue(jwtTokenMock);
+      jest
+        .spyOn(usersService, 'findOneByEmailOrFail')
+        .mockResolvedValue(userMock);
 
       // Act
       const result = await authService.signin(payload);
@@ -65,13 +69,15 @@ describe(AuthService.name, () => {
       const userMock = getUserEntityMock();
 
       const payload: SigninInputDto = {
-        email: 'jonh@gmail.com',
-        password: 'secret-password',
+        email: userMock.email,
+        password: 'invalid-password',
       };
 
-      jest.spyOn(usersService, 'findOneByEmail').mockResolvedValue(userMock);
-
       (jest.spyOn(bcrypt, 'compare') as jest.Mock).mockResolvedValue(false);
+
+      jest
+        .spyOn(usersService, 'findOneByEmailOrFail')
+        .mockResolvedValue(userMock);
 
       // Act
       const promise = authService.signin(payload);
@@ -88,8 +94,8 @@ describe(AuthService.name, () => {
       };
 
       jest
-        .spyOn(usersService, 'findOneByEmail')
-        .mockRejectedValue(new NotFoundException());
+        .spyOn(usersService, 'findOneByEmailOrFail')
+        .mockRejectedValue(new NotFoundException('User not found'));
 
       // Act
       const promise = authService.signin(payload);

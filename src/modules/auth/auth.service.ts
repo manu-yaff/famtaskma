@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { SigninInputDto } from 'src/modules/auth/dto/signin-input.dto';
@@ -19,12 +23,12 @@ export class AuthService {
 
   public async signin(dto: SigninInputDto): Promise<SigninResponseDto> {
     try {
-      // TODO: handle validation when user does not exist
-      const user = await this.usersService.findOneByEmail(dto.email);
+      const user = await this.usersService.findOneByEmailOrFail(dto.email);
+
       const passwordMatch = await bcrypt.compare(dto.password, user.password);
 
       if (!passwordMatch) {
-        throw new UnauthorizedException('Invalid credentials');
+        throw new UnauthorizedException();
       }
 
       const payload: JwtPayload = { sub: user.id, email: user.email };
@@ -32,8 +36,10 @@ export class AuthService {
       return {
         accessToken: await this.jwtService.signAsync(payload),
       };
-    } catch {
-      throw new UnauthorizedException();
+    } catch (error) {
+      if (error instanceof NotFoundException) throw new UnauthorizedException();
+
+      throw error;
     }
   }
 }
