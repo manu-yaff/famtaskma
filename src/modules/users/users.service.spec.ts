@@ -1,5 +1,8 @@
 import { faker } from '@faker-js/faker/.';
-import { InternalServerErrorException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from 'src/modules/users/entities/user.entity';
@@ -90,7 +93,7 @@ describe(UsersService.name, () => {
       });
     });
 
-    it('should throw if user is not found', async () => {
+    it(`should throw ${NotFoundException.name}`, async () => {
       // Arrange
       const emailMock = faker.internet.email();
       const notFoundError = new EntityNotFoundError(User, { email: emailMock });
@@ -103,7 +106,7 @@ describe(UsersService.name, () => {
       const promise = service.findOneByEmailOrFail(emailMock);
 
       // Assert
-      await expect(promise).rejects.toThrow();
+      await expect(promise).rejects.toThrow(NotFoundException);
     });
   });
 
