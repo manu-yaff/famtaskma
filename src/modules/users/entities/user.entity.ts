@@ -1,4 +1,3 @@
-import { Exclude } from 'class-transformer';
 import { ShoppingList } from 'src/modules/products/entities/shopping-list.entity';
 import {
   Column,
@@ -36,7 +35,6 @@ export class User {
    * User password
    * @example secret-password
    */
-  @Exclude()
   @Column({ nullable: false })
   password: string;
 

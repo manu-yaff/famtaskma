@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -7,7 +8,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SignupResponseDto } from 'src/modules/auth/dto/signup-response.dto';
 import { CreateUserDto } from 'src/modules/users/dto/create-user-input.dto';
 import { User } from 'src/modules/users/entities/user.entity';
-import { EntityNotFoundError, Repository } from 'typeorm';
+import {
+  PostgresDriverError,
+  TyperomDuplicatedKeyErrorCode,
+} from 'src/shared/test/typeorm-errors';
+import { EntityNotFoundError, QueryFailedError, Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -17,8 +22,25 @@ export class UsersService {
 
   public async create(dto: CreateUserDto): Promise<SignupResponseDto> {
     try {
-      return await this.usersRepository.save(dto);
-    } catch {
+      const user = await this.usersRepository.save(dto);
+
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        shoppingLists: user.shoppingLists,
+      };
+    } catch (error: unknown) {
+      if (error instanceof QueryFailedError) {
+        const driverError = error.driverError as PostgresDriverError;
+
+        if (driverError.code === TyperomDuplicatedKeyErrorCode) {
+          throw new ConflictException();
+        }
+      }
+
       throw new InternalServerErrorException();
     }
   }

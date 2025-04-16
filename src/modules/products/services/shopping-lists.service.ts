@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateShoppingListDto } from 'src/modules/products/dto/create-shopping-list-input.dto';
 import { ShoppingList } from 'src/modules/products/entities/shopping-list.entity';
 import { UsersService } from 'src/modules/users/users.service';
-import { EntityNotFoundError, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ShoppingListsService {
@@ -27,8 +27,8 @@ export class ShoppingListsService {
         users: [user],
       });
     } catch (error) {
-      if (error instanceof EntityNotFoundError) {
-        throw new NotFoundException();
+      if (error instanceof NotFoundException) {
+        throw error;
       }
 
       throw new InternalServerErrorException();

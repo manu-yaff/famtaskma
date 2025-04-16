@@ -12,6 +12,7 @@ import { DatabaseConfigModule } from 'src/database/database.module';
 import { AuthController } from 'src/modules/auth/auth.controller';
 import { AuthModule } from 'src/modules/auth/auth.module';
 import { SigninInputDto } from 'src/modules/auth/dto/signin-input.dto';
+import { ProductsModule } from 'src/modules/products/products.module';
 import { User } from 'src/modules/users/entities/user.entity';
 import { getCreateUserDto } from 'src/modules/users/mocks/create-user.input.mock';
 import { UsersModule } from 'src/modules/users/users.module';
@@ -26,6 +27,7 @@ describe(AuthController.name, () => {
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [
+        ProductsModule,
         UsersModule,
         DatabaseConfigModule,
         ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env.test' }),
@@ -43,11 +45,11 @@ describe(AuthController.name, () => {
   });
 
   beforeEach(async () => {
-    await usersRepository.clear();
+    await usersRepository.delete({});
   });
 
   afterAll(async () => {
-    await usersRepository.clear();
+    await usersRepository.delete({});
     await app.close();
   });
 
