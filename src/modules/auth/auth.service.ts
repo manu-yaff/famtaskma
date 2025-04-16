@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -10,7 +11,11 @@ import { SigninResponseDto } from 'src/modules/auth/dto/signin-response.dto';
 import { SignupResponseDto } from 'src/modules/auth/dto/signup-response.dto';
 import { CreateUserDto } from 'src/modules/users/dto/create-user-input.dto';
 import { UsersService } from 'src/modules/users/users.service';
-import { mapErrorToHttpException } from 'src/shared/exception-mapper';
+import {
+  PostgresDriverError,
+  TyperomDuplicatedKeyErrorCode,
+} from 'src/shared/error-helper';
+import { QueryFailedError } from 'typeorm';
 
 export interface JwtPayload {
   sub: string;
@@ -42,7 +47,7 @@ export class AuthService {
     } catch (error) {
       if (error instanceof NotFoundException) throw new UnauthorizedException();
 
-      throw mapErrorToHttpException(error);
+      throw error;
     }
   }
 
@@ -56,8 +61,16 @@ export class AuthService {
         email: dto.email,
         password: hashedPassword,
       });
-    } catch (error) {
-      throw mapErrorToHttpException(error);
+    } catch (error: unknown) {
+      if (error instanceof QueryFailedError) {
+        const driverError = error.driverError as PostgresDriverError;
+
+        if (driverError.code === TyperomDuplicatedKeyErrorCode) {
+          throw new ConflictException();
+        }
+      }
+
+      throw error;
     }
   }
 }

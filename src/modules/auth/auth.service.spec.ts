@@ -7,7 +7,6 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
-import { TyperomDuplicatedKeyErrorCode } from 'src/constants';
 import { AuthService } from 'src/modules/auth/auth.service';
 import { SigninInputDto } from 'src/modules/auth/dto/signin-input.dto';
 import { getJwtServiceMock } from 'src/modules/auth/mocks/jwt.service.mock';
@@ -16,7 +15,10 @@ import { getCreateUserDto } from 'src/modules/users/mocks/create-user.input.mock
 import { getUserEntityMock } from 'src/modules/users/mocks/user.entity.mock';
 import { getUsersServiceMock } from 'src/modules/users/mocks/users.service.mock';
 import { UsersService } from 'src/modules/users/users.service';
-import { PostgresDriverError } from 'src/shared/exception-mapper';
+import {
+  PostgresDriverError,
+  TyperomDuplicatedKeyErrorCode,
+} from 'src/shared/error-helper';
 import { MockType } from 'src/shared/test/mock.type';
 import { QueryFailedError } from 'typeorm';
 

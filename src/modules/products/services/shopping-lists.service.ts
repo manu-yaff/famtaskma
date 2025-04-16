@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateShoppingListDto } from 'src/modules/products/dto/create-shopping-list-input.dto';
 import { ShoppingList } from 'src/modules/products/entities/shopping-list.entity';
 import { UsersService } from 'src/modules/users/users.service';
-import { mapErrorToHttpException } from 'src/shared/exception-mapper';
+import { mapErrorToHttpException } from 'src/shared/error-helper';
 import { Repository } from 'typeorm';
 
 @Injectable()

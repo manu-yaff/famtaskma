@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SignupResponseDto } from 'src/modules/auth/dto/signup-response.dto';
 import { CreateUserDto } from 'src/modules/users/dto/create-user-input.dto';
 import { User } from 'src/modules/users/entities/user.entity';
-import { mapErrorToHttpException } from 'src/shared/exception-mapper';
+import { mapErrorToHttpException } from 'src/shared/error-helper';
 import { Repository } from 'typeorm';
 
 @Injectable()
