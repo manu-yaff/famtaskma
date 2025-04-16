@@ -14,7 +14,7 @@ import { UsersService } from 'src/modules/users/users.service';
 import {
   PostgresDriverError,
   TyperomDuplicatedKeyErrorCode,
-} from 'src/shared/error-helper';
+} from 'src/shared/test/typeorm-errors';
 import { QueryFailedError } from 'typeorm';
 
 export interface JwtPayload {

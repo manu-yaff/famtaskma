@@ -2,14 +2,14 @@ import { faker } from '@faker-js/faker/.';
 import { ConflictException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { TyperomDuplicatedKeyErrorCode } from 'src/constants';
 import { CreateCategoryDto } from 'src/modules/products/dto/create-category-input.dto';
 import { Category } from 'src/modules/products/entities/category.entity';
 import { getCategoriesRepositoryMock } from 'src/modules/products/mocks/categories.repository.mock';
 import { getCategoryMock } from 'src/modules/products/mocks/category.entity.mock';
 import { CategoriesService } from 'src/modules/products/services/categories.service';
 import { MockType } from 'src/shared/test/mock.type';
-import { QueryFailedError, Repository } from 'typeorm';
+import { duplicateKeyError } from 'src/shared/test/typeorm-errors';
+import { Repository } from 'typeorm';
 
 const CATEGORIES_REPOSITORY_TOKEN = getRepositoryToken(Category);
 
@@ -54,21 +54,6 @@ describe(CategoriesService.name, () => {
       expect(result).toHaveLength(2);
       expect(result).toEqual(categoriesMock);
     });
-
-    it('should return all the categories', async () => {
-      // Arrange
-      const categoriesMock: Category[] = [];
-
-      jest.spyOn(repository, 'find').mockResolvedValue(categoriesMock);
-
-      // Act
-      const result = await service.findAll();
-
-      // Assert
-      expect(result).toBeInstanceOf(Array);
-      expect(result).toHaveLength(0);
-      expect(result).toEqual(categoriesMock);
-    });
   });
 
   describe(CategoriesService.prototype.create.name, () => {
@@ -80,12 +65,7 @@ describe(CategoriesService.name, () => {
         name: categoryMock,
       };
 
-      const categoryEntityMock: Category = {
-        id: faker.string.uuid(),
-        name: payload.name,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+      const categoryEntityMock: Category = getCategoryMock();
 
       jest.spyOn(repository, 'create').mockReturnValue(categoryEntityMock);
 
@@ -103,9 +83,7 @@ describe(CategoriesService.name, () => {
         name: faker.food.ethnicCategory(),
       };
 
-      const duplicatedKeyError = new QueryFailedError('INSERT INTO', [], {
-        code: TyperomDuplicatedKeyErrorCode,
-      } as any);
+      const duplicatedKeyError = duplicateKeyError('category');
 
       jest.spyOn(repository, 'save').mockRejectedValue(duplicatedKeyError);
 

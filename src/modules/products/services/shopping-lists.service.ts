@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateShoppingListDto } from 'src/modules/products/dto/create-shopping-list-input.dto';
 import { ShoppingList } from 'src/modules/products/entities/shopping-list.entity';
 import { UsersService } from 'src/modules/users/users.service';
-import { mapErrorToHttpException } from 'src/shared/error-helper';
-import { Repository } from 'typeorm';
+import { EntityNotFoundError, Repository } from 'typeorm';
 
 @Injectable()
 export class ShoppingListsService {
@@ -24,7 +27,11 @@ export class ShoppingListsService {
         users: [user],
       });
     } catch (error) {
-      throw mapErrorToHttpException(error);
+      if (error instanceof EntityNotFoundError) {
+        throw new NotFoundException();
+      }
+
+      throw new InternalServerErrorException();
     }
   }
 }

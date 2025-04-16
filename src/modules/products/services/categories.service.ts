@@ -1,8 +1,11 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TyperomDuplicatedKeyErrorCode } from 'src/constants';
 import { CreateCategoryDto } from 'src/modules/products/dto/create-category-input.dto';
 import { Category } from 'src/modules/products/entities/category.entity';
+import {
+  PostgresDriverError,
+  TyperomDuplicatedKeyErrorCode,
+} from 'src/shared/test/typeorm-errors';
 import { QueryFailedError, Repository } from 'typeorm';
 
 @Injectable()
@@ -22,10 +25,14 @@ export class CategoriesService {
       return await this.repository.save(entity);
     } catch (error) {
       if (error instanceof QueryFailedError) {
-        if ('code' in error && error.code === TyperomDuplicatedKeyErrorCode) {
-          throw new ConflictException('Category already exists');
+        const driverError = error.driverError as PostgresDriverError;
+
+        if (driverError.code === TyperomDuplicatedKeyErrorCode) {
+          throw new ConflictException();
         }
       }
+
+      throw error;
     }
   }
 }

@@ -15,12 +15,8 @@ import { getCreateUserDto } from 'src/modules/users/mocks/create-user.input.mock
 import { getUserEntityMock } from 'src/modules/users/mocks/user.entity.mock';
 import { getUsersServiceMock } from 'src/modules/users/mocks/users.service.mock';
 import { UsersService } from 'src/modules/users/users.service';
-import {
-  PostgresDriverError,
-  TyperomDuplicatedKeyErrorCode,
-} from 'src/shared/error-helper';
 import { MockType } from 'src/shared/test/mock.type';
-import { QueryFailedError } from 'typeorm';
+import { duplicateKeyError } from 'src/shared/test/typeorm-errors';
 
 describe(AuthService.name, () => {
   let authService: AuthService;
@@ -122,16 +118,7 @@ describe(AuthService.name, () => {
       // Arrange
       const createUserDto = getCreateUserDto();
 
-      const errorMock = new QueryFailedError<PostgresDriverError>(
-        'INSERT INTO...',
-        [],
-        {
-          name: 'QueryFailedError',
-          message: 'duplicate key value violates unique constraint ...',
-          code: TyperomDuplicatedKeyErrorCode,
-          detail: 'Key (email) already exists',
-        },
-      );
+      const errorMock = duplicateKeyError('email');
 
       jest.spyOn(usersService, 'create').mockRejectedValue(errorMock);
 
