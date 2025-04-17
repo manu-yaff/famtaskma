@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateProductDto } from 'src/modules/products/dto/create-product-input.dto';
 import { Product } from 'src/modules/products/entities/product.entity';
-import { Repository } from 'typeorm';
+import { EntityNotFoundError, Repository } from 'typeorm';
 
 @Injectable()
 export class ProductsService {
@@ -22,5 +22,17 @@ export class ProductsService {
     });
 
     return this.repository.save(entity);
+  }
+
+  public findOneByIdOrFail(id: string): Promise<Product> {
+    try {
+      return this.repository.findOneByOrFail({ id });
+    } catch (error: unknown) {
+      if (error instanceof EntityNotFoundError) {
+        throw new NotFoundException();
+      }
+
+      throw error;
+    }
   }
 }
