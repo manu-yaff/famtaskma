@@ -5,9 +5,9 @@ import {
   ShoppingItem,
   ShoppingItemStatus,
 } from 'src/modules/products/entities/shopping-item.entity';
-import { getProductMock } from 'src/modules/products/mocks/product.entity.mock';
-import { getShoppingListEntityMock } from 'src/modules/products/mocks/shopping-list.entity.mock';
-import { getUserEntityMock } from 'src/modules/users/mocks/user.entity.mock';
+import { getProductEntityMock } from 'src/modules/products/mocks/product.mock';
+import { getShoppingListEntityMock } from 'src/modules/products/mocks/shopping-list.mock';
+import { getUserEntityMock } from 'src/modules/users/mocks/user.mock';
 import { MockType } from 'src/shared/test/mock.type';
 import { Repository } from 'typeorm';
 
@@ -21,7 +21,7 @@ export function getShoppingItemEntityMock(
     notes: faker.word.words(),
     location: faker.location.direction(),
     shoppingList: getShoppingListEntityMock(),
-    product: getProductMock(),
+    product: getProductEntityMock(),
     user: getUserEntityMock(),
     status: ShoppingItemStatus.Todo,
     ...overrides,

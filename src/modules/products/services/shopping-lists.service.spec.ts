@@ -7,11 +7,13 @@ import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CreateShoppingListDto } from 'src/modules/products/dto/create-shopping-list-input.dto';
 import { ShoppingList } from 'src/modules/products/entities/shopping-list.entity';
-import { getShoppingListEntityMock } from 'src/modules/products/mocks/shopping-list.entity.mock';
-import { getShoppingListsRepositoryMock } from 'src/modules/products/mocks/shopping-list.repository.mock';
+import {
+  getShoppingListEntityMock,
+  getShoppingListsRepositoryMock,
+} from 'src/modules/products/mocks/shopping-list.mock';
 import { ShoppingListsService } from 'src/modules/products/services/shopping-lists.service';
 import { User } from 'src/modules/users/entities/user.entity';
-import { getUserEntityMock } from 'src/modules/users/mocks/user.entity.mock';
+import { getUserEntityMock } from 'src/modules/users/mocks/user.mock';
 import { getUsersServiceMock } from 'src/modules/users/mocks/users.service.mock';
 import { UsersService } from 'src/modules/users/services/users.service';
 import { MockType } from 'src/shared/test/mock.type';

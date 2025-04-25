@@ -4,8 +4,10 @@ import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CreateProductDto } from 'src/modules/products/dto/create-product-input.dto';
 import { Product } from 'src/modules/products/entities/product.entity';
-import { getProductMock } from 'src/modules/products/mocks/product.entity.mock';
-import { getProductsRepositoryMock } from 'src/modules/products/mocks/products.repository.mock';
+import {
+  getProductEntityMock,
+  getProductsRepositoryMock,
+} from 'src/modules/products/mocks/product.mock';
 import { ProductsService } from 'src/modules/products/services/products.service';
 import { MockType } from 'src/shared/test/mock.type';
 import { Repository } from 'typeorm';
@@ -39,8 +41,8 @@ describe(ProductsService.name, () => {
     it('should return an array of products', async () => {
       // Arrange
       const productsListMock: Array<Product> = [
-        getProductMock(),
-        getProductMock(),
+        getProductEntityMock(),
+        getProductEntityMock(),
       ];
 
       jest.spyOn(repository, 'find').mockResolvedValue(productsListMock);
@@ -85,7 +87,7 @@ describe(ProductsService.name, () => {
         categoryId: faker.string.uuid(),
       };
 
-      const productMock: Product = getProductMock();
+      const productMock: Product = getProductEntityMock();
 
       jest.spyOn(repository, 'create').mockReturnValue(productMock);
 
@@ -104,7 +106,7 @@ describe(ProductsService.name, () => {
         categoryId: faker.string.uuid(),
       };
 
-      const productMock: Product = getProductMock();
+      const productMock: Product = getProductEntityMock();
 
       jest.spyOn(repository, 'save').mockResolvedValue(productMock);
 

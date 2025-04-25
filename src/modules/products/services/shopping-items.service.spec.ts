@@ -6,19 +6,23 @@ import {
   ShoppingItem,
   ShoppingItemStatus,
 } from 'src/modules/products/entities/shopping-item.entity';
-import { getProductMock } from 'src/modules/products/mocks/product.entity.mock';
-import { getProductsServiceMock } from 'src/modules/products/mocks/products.service.mock';
+import {
+  getProductEntityMock,
+  getProductsServiceMock,
+} from 'src/modules/products/mocks/product.mock';
 import {
   getCreateShoppingItemDtoMock,
   getShoppingItemEntityMock,
   getShoppingItemRepositoryMock,
 } from 'src/modules/products/mocks/shopping-item.mock';
-import { getShoppingListEntityMock } from 'src/modules/products/mocks/shopping-list.entity.mock';
-import { getShoppingListsServiceMock } from 'src/modules/products/mocks/shopping-lists.service.mock';
+import {
+  getShoppingListEntityMock,
+  getShoppingListsServiceMock,
+} from 'src/modules/products/mocks/shopping-list.mock';
 import { ProductsService } from 'src/modules/products/services/products.service';
 import { ShoppingItemsService } from 'src/modules/products/services/shopping-items.service';
 import { ShoppingListsService } from 'src/modules/products/services/shopping-lists.service';
-import { getUserEntityMock } from 'src/modules/users/mocks/user.entity.mock';
+import { getUserEntityMock } from 'src/modules/users/mocks/user.mock';
 import { getUsersServiceMock } from 'src/modules/users/mocks/users.service.mock';
 import { UsersService } from 'src/modules/users/services/users.service';
 import { MockType } from 'src/shared/test/mock.type';
@@ -96,7 +100,7 @@ describe(ShoppingItemsService.name, () => {
         location: dto.location,
         status: ShoppingItemStatus.Todo,
         shoppingList: getShoppingListEntityMock({ id: dto.shoppingListId }),
-        product: getProductMock({ id: dto.productId }),
+        product: getProductEntityMock({ id: dto.productId }),
         user: getUserEntityMock({ id: dto.userId }),
       });
 

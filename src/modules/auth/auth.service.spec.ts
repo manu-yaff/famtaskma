@@ -11,8 +11,10 @@ import { AuthService } from 'src/modules/auth/auth.service';
 import { SigninInputDto } from 'src/modules/auth/dto/signin-input.dto';
 import { getJwtServiceMock } from 'src/modules/auth/mocks/jwt.service.mock';
 import { CreateUserDto } from 'src/modules/users/dto/create-user-input.dto';
-import { getCreateUserDto } from 'src/modules/users/mocks/create-user.input.mock';
-import { getUserEntityMock } from 'src/modules/users/mocks/user.entity.mock';
+import {
+  getCreateUserDto,
+  getUserEntityMock,
+} from 'src/modules/users/mocks/user.mock';
 import { getUsersServiceMock } from 'src/modules/users/mocks/users.service.mock';
 import { UsersService } from 'src/modules/users/services/users.service';
 import { MockType } from 'src/shared/test/mock.type';

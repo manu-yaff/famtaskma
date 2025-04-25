@@ -12,7 +12,7 @@ import { DatabaseConfigModule } from 'src/database/database.module';
 import { CategoriesController } from 'src/modules/products/controllers/categories.controller';
 import { CreateCategoryDto } from 'src/modules/products/dto/create-category-input.dto';
 import { Category } from 'src/modules/products/entities/category.entity';
-import { getCategoryMock } from 'src/modules/products/mocks/category.entity.mock';
+import { getCategoryEntityMock } from 'src/modules/products/mocks/category.mock';
 import { ProductsModule } from 'src/modules/products/products.module';
 import * as request from 'supertest';
 import { Repository } from 'typeorm';
@@ -58,8 +58,10 @@ describe(CategoriesController.name, () => {
   describe(CategoriesController.prototype.findAll.name, () => {
     it('should list all categories', async () => {
       // Arrange
-      const c1 = repository.create(getCategoryMock({ name: 'fruits' }));
-      const c2 = repository.create(getCategoryMock({ name: 'vegetables' }));
+      const c1 = repository.create(getCategoryEntityMock({ name: 'fruits' }));
+      const c2 = repository.create(
+        getCategoryEntityMock({ name: 'vegetables' }),
+      );
       await repository.save([c1, c2]);
 
       // Act

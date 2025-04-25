@@ -11,10 +11,12 @@ import * as http from 'node:http';
 import { DatabaseConfigModule } from 'src/database/database.module';
 import { AuthController } from 'src/modules/auth/auth.controller';
 import { AuthModule } from 'src/modules/auth/auth.module';
-import { SigninInputDto } from 'src/modules/auth/dto/signin-input.dto';
 import { ProductsModule } from 'src/modules/products/products.module';
 import { User } from 'src/modules/users/entities/user.entity';
-import { getCreateUserDto } from 'src/modules/users/mocks/create-user.input.mock';
+import {
+  getCreateUserDto,
+  getSiginDto,
+} from 'src/modules/users/mocks/user.mock';
 import { UsersModule } from 'src/modules/users/users.module';
 import * as request from 'supertest';
 import { Repository } from 'typeorm';
@@ -59,10 +61,7 @@ describe(AuthController.name, () => {
 
     it(`should throw ${UnauthorizedException.name} when user does not exist`, async () => {
       // Arrange
-      const payload: SigninInputDto = {
-        email: 'jonh@gmail.com',
-        password: 'secret-pass',
-      };
+      const payload = getSiginDto();
 
       // Act
       const response = await request(nestServer)
@@ -96,7 +95,7 @@ describe(AuthController.name, () => {
       expect(body.accessToken).toEqual(expect.any(String));
     });
 
-    describe('invalid fields', () => {
+    describe('Invalid fields', () => {
       it('should throw error when email is missing', async () => {
         // Arrange
 

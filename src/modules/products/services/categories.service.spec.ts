@@ -4,8 +4,10 @@ import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CreateCategoryDto } from 'src/modules/products/dto/create-category-input.dto';
 import { Category } from 'src/modules/products/entities/category.entity';
-import { getCategoriesRepositoryMock } from 'src/modules/products/mocks/categories.repository.mock';
-import { getCategoryMock } from 'src/modules/products/mocks/category.entity.mock';
+import {
+  getCategoriesRepositoryMock,
+  getCategoryEntityMock,
+} from 'src/modules/products/mocks/category.mock';
 import { CategoriesService } from 'src/modules/products/services/categories.service';
 import { MockType } from 'src/shared/test/mock.type';
 import { duplicateKeyError } from 'src/shared/typeorm-errors';
@@ -40,8 +42,8 @@ describe(CategoriesService.name, () => {
     it('should return all the categories', async () => {
       // Arrange
       const categoriesMock: Category[] = [
-        getCategoryMock({ name: 'fruits' }),
-        getCategoryMock({ name: 'vegetables' }),
+        getCategoryEntityMock({ name: 'fruits' }),
+        getCategoryEntityMock({ name: 'vegetables' }),
       ];
 
       jest.spyOn(repository, 'find').mockResolvedValue(categoriesMock);
@@ -65,7 +67,7 @@ describe(CategoriesService.name, () => {
         name: categoryMock,
       };
 
-      const categoryEntityMock: Category = getCategoryMock();
+      const categoryEntityMock: Category = getCategoryEntityMock();
 
       jest.spyOn(repository, 'create').mockReturnValue(categoryEntityMock);
 

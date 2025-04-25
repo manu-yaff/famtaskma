@@ -17,7 +17,7 @@ import { CreateShoppingListDto } from 'src/modules/products/dto/create-shopping-
 import { Category } from 'src/modules/products/entities/category.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 import { ShoppingList } from 'src/modules/products/entities/shopping-list.entity';
-import { getProductMock } from 'src/modules/products/mocks/product.entity.mock';
+import { getProductEntityMock } from 'src/modules/products/mocks/product.mock';
 import { ProductsModule } from 'src/modules/products/products.module';
 import { CreateUserDto } from 'src/modules/users/dto/create-user-input.dto';
 import { User } from 'src/modules/users/entities/user.entity';
@@ -74,8 +74,8 @@ describe(ProductsController.name, () => {
       });
 
       const productsMocks = [
-        getProductMock({ category }),
-        getProductMock({ category }),
+        getProductEntityMock({ category }),
+        getProductEntityMock({ category }),
       ];
 
       await productsRepository.save(productsMocks);

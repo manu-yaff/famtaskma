@@ -6,8 +6,10 @@ import {
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from 'src/modules/users/entities/user.entity';
-import { getCreateUserDto } from 'src/modules/users/mocks/create-user.input.mock';
-import { getUserEntityMock } from 'src/modules/users/mocks/user.entity.mock';
+import {
+  getCreateUserDto,
+  getUserEntityMock,
+} from 'src/modules/users/mocks/user.mock';
 import { getUserRepositoryMock } from 'src/modules/users/mocks/users.repository.mock';
 import { UsersService } from 'src/modules/users/services/users.service';
 import { MockType } from 'src/shared/test/mock.type';
