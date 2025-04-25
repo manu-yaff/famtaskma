@@ -70,7 +70,15 @@ describe(UsersService.name, () => {
       const result = await service.create(createUserDto);
 
       // Assert
-      expect(result).toEqual(newUserMock);
+      expect(result).toEqual({
+        id: newUserMock.id,
+        name: newUserMock.name,
+        email: newUserMock.email,
+        shoppingLists: newUserMock.shoppingLists,
+        createdAt: newUserMock.createdAt,
+        updatedAt: newUserMock.updatedAt,
+      });
+
       expect(repository.save).toHaveBeenCalledWith({
         name: createUserDto.name,
         email: createUserDto.email,
