@@ -6,16 +6,19 @@ import {
   ShoppingItem,
   ShoppingItemStatus,
 } from 'src/modules/products/entities/shopping-item.entity';
+import { getProductMock } from 'src/modules/products/mocks/product.entity.mock';
 import { getProductsServiceMock } from 'src/modules/products/mocks/products.service.mock';
 import {
   getCreateShoppingItemDtoMock,
   getShoppingItemEntityMock,
   getShoppingItemRepositoryMock,
 } from 'src/modules/products/mocks/shopping-item.mock';
+import { getShoppingListEntityMock } from 'src/modules/products/mocks/shopping-list.entity.mock';
 import { getShoppingListsServiceMock } from 'src/modules/products/mocks/shopping-lists.service.mock';
 import { ProductsService } from 'src/modules/products/services/products.service';
 import { ShoppingItemsService } from 'src/modules/products/services/shopping-items.service';
 import { ShoppingListsService } from 'src/modules/products/services/shopping-lists.service';
+import { getUserEntityMock } from 'src/modules/users/mocks/user.entity.mock';
 import { getUsersServiceMock } from 'src/modules/users/mocks/users.service.mock';
 import { UsersService } from 'src/modules/users/users.service';
 import { MockType } from 'src/shared/test/mock.type';
@@ -67,7 +70,7 @@ describe(ShoppingItemsService.name, () => {
   describe(ShoppingItemsService.prototype.create.name, () => {
     const dto: CreateShoppingItemDto = getCreateShoppingItemDtoMock();
 
-    it('should return create shopping list item', async () => {
+    it('should return the created shopping item', async () => {
       // Arrange
       const shoppingListItemMock = getShoppingItemEntityMock();
 
@@ -86,25 +89,38 @@ describe(ShoppingItemsService.name, () => {
       // Arrange
       const dto: CreateShoppingItemDto = getCreateShoppingItemDtoMock();
 
-      // Act
-      await shoppingListItemsService.create(dto);
-
-      // Assert
-      expect(shoppingItemsRepository.save).toHaveBeenCalledWith({
+      const shoppingItemMock = getShoppingItemEntityMock({
         quantity: dto.quantity,
         quantityType: dto.quantityType,
         notes: dto.notes,
         location: dto.location,
         status: ShoppingItemStatus.Todo,
-        shoppingListId: dto.shoppingListId,
-        productId: dto.productId,
-        userId: dto.userId,
+        shoppingList: getShoppingListEntityMock({ id: dto.shoppingListId }),
+        product: getProductMock({ id: dto.productId }),
+        user: getUserEntityMock({ id: dto.userId }),
       });
+
+      jest
+        .spyOn(shoppingItemsRepository, 'create')
+        .mockReturnValue(shoppingItemMock);
+
+      // Act
+      await shoppingListItemsService.create(dto);
+
+      // Assert
+      expect(shoppingItemsRepository.save).toHaveBeenCalledWith(
+        shoppingItemMock,
+      );
     });
 
-    it('should set initial status to todo', async () => {
+    it(`should set initial status to todo ${ShoppingItemStatus.Todo}`, async () => {
       // Arrange
       const dto: CreateShoppingItemDto = getCreateShoppingItemDtoMock();
+      const shoppingItemMock = getShoppingItemEntityMock();
+
+      jest
+        .spyOn(shoppingItemsRepository, 'create')
+        .mockReturnValue(shoppingItemMock);
 
       // Act
       await shoppingListItemsService.create(dto);

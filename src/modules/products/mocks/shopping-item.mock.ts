@@ -11,7 +11,9 @@ import { getUserEntityMock } from 'src/modules/users/mocks/user.entity.mock';
 import { MockType } from 'src/shared/test/mock.type';
 import { Repository } from 'typeorm';
 
-export function getShoppingItemEntityMock(): ShoppingItem {
+export function getShoppingItemEntityMock(
+  overrides?: Partial<ShoppingItem>,
+): ShoppingItem {
   return {
     id: faker.string.uuid(),
     quantity: faker.number.int({ min: 1, max: 100 }),
@@ -22,6 +24,7 @@ export function getShoppingItemEntityMock(): ShoppingItem {
     product: getProductMock(),
     user: getUserEntityMock(),
     status: ShoppingItemStatus.Todo,
+    ...overrides,
   };
 }
 
@@ -42,5 +45,6 @@ export function getShoppingItemRepositoryMock(): MockType<
 > {
   return {
     save: jest.fn(),
+    create: jest.fn(),
   };
 }

@@ -4,7 +4,7 @@ import { CreateShoppingItemDto } from 'src/modules/products/dto/create-shopping-
 import { ShoppingItemsService } from 'src/modules/products/services/shopping-items.service';
 
 @ApiBearerAuth()
-@Controller('shopping-item')
+@Controller('shopping-items')
 export class ShoppingItemController {
   constructor(private readonly service: ShoppingItemsService) {}
 
