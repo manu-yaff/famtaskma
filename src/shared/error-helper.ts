@@ -14,7 +14,7 @@ import { EntityNotFoundError, QueryFailedError, TypeORMError } from 'typeorm';
  * @param error
  * @returns HttpException
  */
-export function mapErrorToHttpException(error: unknown) {
+export function mapErrorToHttpException(error: unknown): HttpException {
   // means, it has already been format, so just re-throw
   if (error instanceof HttpException) {
     throw error;
