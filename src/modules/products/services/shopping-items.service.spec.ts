@@ -1,40 +1,39 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { CreateShoppingListItemDto } from 'src/modules/products/dto/create-shopping-list-item-input.dto';
+import { CreateShoppingItemDto } from 'src/modules/products/dto/create-shopping-item-input.dto';
 import {
+  ShoppingItem,
   ShoppingItemStatus,
-  ShoppingListItem,
-} from 'src/modules/products/entities/shopping-list-item.entity';
+} from 'src/modules/products/entities/shopping-item.entity';
 import { getProductsServiceMock } from 'src/modules/products/mocks/products.service.mock';
 import {
-  getCreateShoppingListItemDtoMock,
-  getShoppingListItemEntityMock,
-} from 'src/modules/products/mocks/shopping-list-item.entity.mock';
-import { getShoppingListItemsRepositoryMock } from 'src/modules/products/mocks/shopping-list-items.repository.mock';
+  getCreateShoppingItemDtoMock,
+  getShoppingItemEntityMock,
+  getShoppingItemRepositoryMock,
+} from 'src/modules/products/mocks/shopping-item.mock';
 import { getShoppingListsServiceMock } from 'src/modules/products/mocks/shopping-lists.service.mock';
 import { ProductsService } from 'src/modules/products/services/products.service';
-import { ShoppingListItemsService } from 'src/modules/products/services/shopping-list-items.service';
+import { ShoppingItemsService } from 'src/modules/products/services/shopping-items.service';
 import { ShoppingListsService } from 'src/modules/products/services/shopping-lists.service';
 import { getUsersServiceMock } from 'src/modules/users/mocks/users.service.mock';
 import { UsersService } from 'src/modules/users/users.service';
 import { MockType } from 'src/shared/test/mock.type';
 import { Repository } from 'typeorm';
 
-const SHOPPING_LIST_ITEM_REPOSITORY_TOKEN =
-  getRepositoryToken(ShoppingListItem);
+const SHOPPING_ITEM_REPOSITORY_TOKEN = getRepositoryToken(ShoppingItem);
 
-describe(ShoppingListItemsService.name, () => {
-  let shoppingListItemsService: ShoppingListItemsService;
+describe(ShoppingItemsService.name, () => {
+  let shoppingListItemsService: ShoppingItemsService;
   let usersService: UsersService;
   let productsService: ProductsService;
   let shoppingListsService: ShoppingListsService;
-  let shoppingListItemsRepository: MockType<Repository<ShoppingListItem>>;
+  let shoppingItemsRepository: MockType<Repository<ShoppingItem>>;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
-        ShoppingListItemsService,
+        ShoppingItemsService,
         {
           provide: UsersService,
           useValue: getUsersServiceMock(),
@@ -48,34 +47,32 @@ describe(ShoppingListItemsService.name, () => {
           useValue: getShoppingListsServiceMock(),
         },
         {
-          provide: SHOPPING_LIST_ITEM_REPOSITORY_TOKEN,
-          useValue: getShoppingListItemsRepositoryMock(),
+          provide: SHOPPING_ITEM_REPOSITORY_TOKEN,
+          useValue: getShoppingItemRepositoryMock(),
         },
       ],
     }).compile();
 
-    shoppingListItemsService = moduleRef.get(ShoppingListItemsService);
+    shoppingListItemsService = moduleRef.get(ShoppingItemsService);
     usersService = moduleRef.get(UsersService);
     productsService = moduleRef.get(ProductsService);
     shoppingListsService = moduleRef.get(ShoppingListsService);
-    shoppingListItemsRepository = moduleRef.get(
-      SHOPPING_LIST_ITEM_REPOSITORY_TOKEN,
-    );
+    shoppingItemsRepository = moduleRef.get(SHOPPING_ITEM_REPOSITORY_TOKEN);
   });
 
   it('should be defined', () => {
     expect(shoppingListItemsService).toBeDefined();
   });
 
-  describe(ShoppingListItemsService.prototype.create.name, () => {
-    const dto: CreateShoppingListItemDto = getCreateShoppingListItemDtoMock();
+  describe(ShoppingItemsService.prototype.create.name, () => {
+    const dto: CreateShoppingItemDto = getCreateShoppingItemDtoMock();
 
     it('should return create shopping list item', async () => {
       // Arrange
-      const shoppingListItemMock = getShoppingListItemEntityMock();
+      const shoppingListItemMock = getShoppingItemEntityMock();
 
       jest
-        .spyOn(shoppingListItemsRepository, 'save')
+        .spyOn(shoppingItemsRepository, 'save')
         .mockResolvedValue(shoppingListItemMock);
 
       // Act
@@ -85,15 +82,15 @@ describe(ShoppingListItemsService.name, () => {
       expect(result).toEqual(shoppingListItemMock);
     });
 
-    it(`should call ${ShoppingListItem.name} ${Repository.prototype.save.name}`, async () => {
+    it(`should call ${ShoppingItem.name} ${Repository.prototype.save.name}`, async () => {
       // Arrange
-      const dto: CreateShoppingListItemDto = getCreateShoppingListItemDtoMock();
+      const dto: CreateShoppingItemDto = getCreateShoppingItemDtoMock();
 
       // Act
       await shoppingListItemsService.create(dto);
 
       // Assert
-      expect(shoppingListItemsRepository.save).toHaveBeenCalledWith({
+      expect(shoppingItemsRepository.save).toHaveBeenCalledWith({
         quantity: dto.quantity,
         quantityType: dto.quantityType,
         notes: dto.notes,
@@ -107,13 +104,13 @@ describe(ShoppingListItemsService.name, () => {
 
     it('should set initial status to todo', async () => {
       // Arrange
-      const dto: CreateShoppingListItemDto = getCreateShoppingListItemDtoMock();
+      const dto: CreateShoppingItemDto = getCreateShoppingItemDtoMock();
 
       // Act
       await shoppingListItemsService.create(dto);
 
       // Assert
-      expect(shoppingListItemsRepository.save).toHaveBeenCalledWith(
+      expect(shoppingItemsRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({ status: ShoppingItemStatus.Todo }),
       );
     });
@@ -121,7 +118,7 @@ describe(ShoppingListItemsService.name, () => {
     // TODO: get user from decorator
     it(`should throw ${NotFoundException.name} when user is not found`, async () => {
       // Arrange
-      const dto: CreateShoppingListItemDto = getCreateShoppingListItemDtoMock();
+      const dto: CreateShoppingItemDto = getCreateShoppingItemDtoMock();
 
       const userNotFoundException = new NotFoundException();
 
@@ -138,7 +135,7 @@ describe(ShoppingListItemsService.name, () => {
 
     it(`should throw ${NotFoundException.name} when product is not found`, async () => {
       // Arrange
-      const dto: CreateShoppingListItemDto = getCreateShoppingListItemDtoMock();
+      const dto: CreateShoppingItemDto = getCreateShoppingItemDtoMock();
 
       const productNotFoundException = new NotFoundException();
 
@@ -155,7 +152,7 @@ describe(ShoppingListItemsService.name, () => {
 
     it(`should throw ${NotFoundException.name} when list is not found`, async () => {
       // Arrange
-      const dto: CreateShoppingListItemDto = getCreateShoppingListItemDtoMock();
+      const dto: CreateShoppingItemDto = getCreateShoppingItemDtoMock();
 
       const shoppingListNotFoundError = new NotFoundException();
 

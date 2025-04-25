@@ -11,10 +11,7 @@ import { SigninResponseDto } from 'src/modules/auth/dto/signin-response.dto';
 import { SignupResponseDto } from 'src/modules/auth/dto/signup-response.dto';
 import { CreateUserDto } from 'src/modules/users/dto/create-user-input.dto';
 import { UsersService } from 'src/modules/users/users.service';
-import {
-  PostgresDriverError,
-  TyperomDuplicatedKeyErrorCode,
-} from 'src/shared/test/typeorm-errors';
+import { PostgresDriverError, TypeormErrors } from 'src/shared/typeorm-errors';
 import { QueryFailedError } from 'typeorm';
 
 export interface JwtPayload {
@@ -65,7 +62,7 @@ export class AuthService {
       if (error instanceof QueryFailedError) {
         const driverError = error.driverError as PostgresDriverError;
 
-        if (driverError.code === TyperomDuplicatedKeyErrorCode) {
+        if (driverError.code === TypeormErrors.duplicateKeyError) {
           throw new ConflictException();
         }
       }

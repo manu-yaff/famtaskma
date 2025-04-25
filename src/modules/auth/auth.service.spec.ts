@@ -16,7 +16,7 @@ import { getUserEntityMock } from 'src/modules/users/mocks/user.entity.mock';
 import { getUsersServiceMock } from 'src/modules/users/mocks/users.service.mock';
 import { UsersService } from 'src/modules/users/users.service';
 import { MockType } from 'src/shared/test/mock.type';
-import { duplicateKeyError } from 'src/shared/test/typeorm-errors';
+import { duplicateKeyError } from 'src/shared/typeorm-errors';
 
 describe(AuthService.name, () => {
   let authService: AuthService;

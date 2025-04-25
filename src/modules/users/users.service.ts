@@ -8,10 +8,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SignupResponseDto } from 'src/modules/auth/dto/signup-response.dto';
 import { CreateUserDto } from 'src/modules/users/dto/create-user-input.dto';
 import { User } from 'src/modules/users/entities/user.entity';
-import {
-  PostgresDriverError,
-  TyperomDuplicatedKeyErrorCode,
-} from 'src/shared/test/typeorm-errors';
+import { mapErrorToHttpException } from 'src/shared/error-helper';
+import { PostgresDriverError, TypeormErrors } from 'src/shared/typeorm-errors';
 import { EntityNotFoundError, QueryFailedError, Repository } from 'typeorm';
 
 @Injectable()
@@ -36,7 +34,7 @@ export class UsersService {
       if (error instanceof QueryFailedError) {
         const driverError = error.driverError as PostgresDriverError;
 
-        if (driverError.code === TyperomDuplicatedKeyErrorCode) {
+        if (driverError.code === TypeormErrors.duplicateKeyError) {
           throw new ConflictException();
         }
       }
@@ -48,12 +46,8 @@ export class UsersService {
   public async findOneByIdOrFail(id: string): Promise<User> {
     try {
       return await this.usersRepository.findOneByOrFail({ id });
-    } catch (error) {
-      if (error instanceof EntityNotFoundError) {
-        throw new NotFoundException();
-      }
-
-      throw new InternalServerErrorException();
+    } catch (error: unknown) {
+      throw mapErrorToHttpException(error);
     }
   }
 

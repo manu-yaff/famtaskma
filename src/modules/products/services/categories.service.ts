@@ -2,10 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCategoryDto } from 'src/modules/products/dto/create-category-input.dto';
 import { Category } from 'src/modules/products/entities/category.entity';
-import {
-  PostgresDriverError,
-  TyperomDuplicatedKeyErrorCode,
-} from 'src/shared/test/typeorm-errors';
+import { PostgresDriverError, TypeormErrors } from 'src/shared/typeorm-errors';
 import { QueryFailedError, Repository } from 'typeorm';
 
 @Injectable()
@@ -27,7 +24,7 @@ export class CategoriesService {
       if (error instanceof QueryFailedError) {
         const driverError = error.driverError as PostgresDriverError;
 
-        if (driverError.code === TyperomDuplicatedKeyErrorCode) {
+        if (driverError.code === TypeormErrors.duplicateKeyError) {
           throw new ConflictException();
         }
       }

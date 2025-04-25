@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateProductDto } from 'src/modules/products/dto/create-product-input.dto';
 import { Product } from 'src/modules/products/entities/product.entity';
-import { EntityNotFoundError, Repository } from 'typeorm';
+import { mapErrorToHttpException } from 'src/shared/error-helper';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ProductsService {
@@ -28,11 +29,7 @@ export class ProductsService {
     try {
       return this.repository.findOneByOrFail({ id });
     } catch (error: unknown) {
-      if (error instanceof EntityNotFoundError) {
-        throw new NotFoundException();
-      }
-
-      throw error;
+      throw mapErrorToHttpException(error);
     }
   }
 }

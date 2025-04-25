@@ -8,7 +8,7 @@ import { getCategoriesRepositoryMock } from 'src/modules/products/mocks/categori
 import { getCategoryMock } from 'src/modules/products/mocks/category.entity.mock';
 import { CategoriesService } from 'src/modules/products/services/categories.service';
 import { MockType } from 'src/shared/test/mock.type';
-import { duplicateKeyError } from 'src/shared/test/typeorm-errors';
+import { duplicateKeyError } from 'src/shared/typeorm-errors';
 import { Repository } from 'typeorm';
 
 const CATEGORIES_REPOSITORY_TOKEN = getRepositoryToken(Category);
