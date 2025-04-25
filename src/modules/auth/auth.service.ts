@@ -1,5 +1,4 @@
 import {
-  ConflictException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -10,9 +9,8 @@ import { SigninInputDto } from 'src/modules/auth/dto/signin-input.dto';
 import { SigninResponseDto } from 'src/modules/auth/dto/signin-response.dto';
 import { SignupResponseDto } from 'src/modules/auth/dto/signup-response.dto';
 import { CreateUserDto } from 'src/modules/users/dto/create-user-input.dto';
-import { UsersService } from 'src/modules/users/users.service';
-import { PostgresDriverError, TypeormErrors } from 'src/shared/typeorm-errors';
-import { QueryFailedError } from 'typeorm';
+import { UsersService } from 'src/modules/users/services/users.service';
+import { mapErrorToHttpException } from 'src/shared/error-helper';
 
 export interface JwtPayload {
   sub: string;
@@ -44,7 +42,7 @@ export class AuthService {
     } catch (error) {
       if (error instanceof NotFoundException) throw new UnauthorizedException();
 
-      throw error;
+      throw mapErrorToHttpException(error);
     }
   }
 
@@ -59,15 +57,7 @@ export class AuthService {
         password: hashedPassword,
       });
     } catch (error: unknown) {
-      if (error instanceof QueryFailedError) {
-        const driverError = error.driverError as PostgresDriverError;
-
-        if (driverError.code === TypeormErrors.duplicateKeyError) {
-          throw new ConflictException();
-        }
-      }
-
-      throw error;
+      throw mapErrorToHttpException(error);
     }
   }
 }

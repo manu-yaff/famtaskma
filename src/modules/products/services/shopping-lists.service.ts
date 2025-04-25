@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateShoppingListDto } from 'src/modules/products/dto/create-shopping-list-input.dto';
 import { ShoppingList } from 'src/modules/products/entities/shopping-list.entity';
-import { UsersService } from 'src/modules/users/users.service';
+import { UsersService } from 'src/modules/users/services/users.service';
 import { mapErrorToHttpException } from 'src/shared/error-helper';
-import { EntityNotFoundError, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ShoppingListsService {
@@ -24,10 +24,6 @@ export class ShoppingListsService {
         users: [user],
       });
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-
       throw mapErrorToHttpException(error);
     }
   }
@@ -36,11 +32,7 @@ export class ShoppingListsService {
     try {
       return await this.shoppingListsRepository.findOneByOrFail({ id });
     } catch (error: unknown) {
-      if (error instanceof EntityNotFoundError) {
-        throw new NotFoundException();
-      }
-
-      throw error;
+      throw mapErrorToHttpException(error);
     }
   }
 }

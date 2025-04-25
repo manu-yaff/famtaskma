@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker/.';
+import { InternalServerErrorException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CreateProductDto } from 'src/modules/products/dto/create-product-input.dto';
@@ -114,7 +115,7 @@ describe(ProductsService.name, () => {
       expect(result).toEqual(productMock);
     });
 
-    it('should throw if repository throws', async () => {
+    it(`should throw ${InternalServerErrorException.name} if repository throws`, async () => {
       // Arrange
       const payload: CreateProductDto = {
         name: faker.food.fruit(),

@@ -16,13 +16,16 @@ export class ProductsService {
   }
 
   public create(dto: CreateProductDto) {
-    const entity = this.repository.create({
-      name: dto.name,
-      description: dto.description,
-      category: { id: dto.categoryId },
-    });
-
-    return this.repository.save(entity);
+    try {
+      const entity = this.repository.create({
+        name: dto.name,
+        description: dto.description,
+        category: { id: dto.categoryId },
+      });
+      return this.repository.save(entity);
+    } catch (error) {
+      throw mapErrorToHttpException(error);
+    }
   }
 
   public findOneByIdOrFail(id: string): Promise<Product> {

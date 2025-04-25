@@ -20,7 +20,7 @@ import { ShoppingItemsService } from 'src/modules/products/services/shopping-ite
 import { ShoppingListsService } from 'src/modules/products/services/shopping-lists.service';
 import { getUserEntityMock } from 'src/modules/users/mocks/user.entity.mock';
 import { getUsersServiceMock } from 'src/modules/users/mocks/users.service.mock';
-import { UsersService } from 'src/modules/users/users.service';
+import { UsersService } from 'src/modules/users/services/users.service';
 import { MockType } from 'src/shared/test/mock.type';
 import { Repository } from 'typeorm';
 

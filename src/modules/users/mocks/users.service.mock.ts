@@ -1,4 +1,4 @@
-import { UsersService } from 'src/modules/users/users.service';
+import { UsersService } from 'src/modules/users/services/users.service';
 import { MockType } from 'src/shared/test/mock.type';
 
 export function getUsersServiceMock(): MockType<UsersService> {

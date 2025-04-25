@@ -14,7 +14,7 @@ import { CreateUserDto } from 'src/modules/users/dto/create-user-input.dto';
 import { getCreateUserDto } from 'src/modules/users/mocks/create-user.input.mock';
 import { getUserEntityMock } from 'src/modules/users/mocks/user.entity.mock';
 import { getUsersServiceMock } from 'src/modules/users/mocks/users.service.mock';
-import { UsersService } from 'src/modules/users/users.service';
+import { UsersService } from 'src/modules/users/services/users.service';
 import { MockType } from 'src/shared/test/mock.type';
 import { duplicateKeyError } from 'src/shared/typeorm-errors';
 

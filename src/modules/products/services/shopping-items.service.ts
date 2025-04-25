@@ -7,7 +7,7 @@ import {
 } from 'src/modules/products/entities/shopping-item.entity';
 import { ProductsService } from 'src/modules/products/services/products.service';
 import { ShoppingListsService } from 'src/modules/products/services/shopping-lists.service';
-import { UsersService } from 'src/modules/users/users.service';
+import { UsersService } from 'src/modules/users/services/users.service';
 import { mapErrorToHttpException } from 'src/shared/error-helper';
 import { Repository } from 'typeorm';
 
