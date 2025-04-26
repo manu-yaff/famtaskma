@@ -28,7 +28,9 @@ export function getShoppingItemEntityMock(
   };
 }
 
-export function getCreateShoppingItemDtoMock(): CreateShoppingItemDto {
+export function getCreateShoppingItemDtoMock(
+  overrides?: Partial<CreateShoppingItemDto>,
+): CreateShoppingItemDto {
   return {
     quantity: faker.number.int({ min: 1, max: 100 }),
     quantityType: faker.helpers.enumValue(QuantityType),
@@ -37,6 +39,7 @@ export function getCreateShoppingItemDtoMock(): CreateShoppingItemDto {
     shoppingListId: faker.string.uuid(),
     productId: faker.string.uuid(),
     userId: faker.string.uuid(),
+    ...overrides,
   };
 }
 
