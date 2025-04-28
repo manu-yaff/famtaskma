@@ -21,6 +21,7 @@ async function bootstrap() {
 
   const logger = new Logger();
 
+  app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter(logger));
   app.useGlobalInterceptors(new TransformInterceptor());

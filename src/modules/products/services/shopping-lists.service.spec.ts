@@ -141,4 +141,35 @@ describe(ShoppingListsService.name, () => {
       await expect(promise).rejects.toThrow(NotFoundException);
     });
   });
+
+  describe(ShoppingListsService.prototype.findAllByUserEmail.name, () => {
+    it('should get all lists for the given email', async () => {
+      // Arrange
+      const userEmailMock = faker.internet.email();
+
+      // Act
+      await shoppingListsService.findAllByUserEmail(userEmailMock);
+
+      // Assert
+      expect(shoppingListsRepository.findBy).toHaveBeenCalledWith({
+        users: { email: userEmailMock },
+      });
+    });
+
+    it(`should throw ${InternalServerErrorException.name} if error ocurrs`, async () => {
+      // Arrange
+      const userEmailMock = faker.internet.email();
+      const errorMock = new Error('unexpected error');
+
+      jest
+        .spyOn(shoppingListsRepository, 'findBy')
+        .mockRejectedValue(errorMock);
+
+      // Act
+      const promise = shoppingListsService.findAllByUserEmail(userEmailMock);
+
+      // Assert
+      await expect(promise).rejects.toThrow(InternalServerErrorException);
+    });
+  });
 });

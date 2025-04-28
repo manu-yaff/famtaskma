@@ -15,6 +15,7 @@ import { CONFIG_KEYS, DATABASE_TYPE } from 'src/constants';
           database: configService.getOrThrow(CONFIG_KEYS.DB_NAME),
           username: configService.getOrThrow(CONFIG_KEYS.DB_USERNAME),
           password: configService.getOrThrow(CONFIG_KEYS.DB_PASSWORD),
+          logging: true,
           synchronize:
             configService.getOrThrow(CONFIG_KEYS.ENVIRONMENT) === 'testing'
               ? true

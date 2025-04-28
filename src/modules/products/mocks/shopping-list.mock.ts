@@ -24,6 +24,7 @@ export function getShoppingListsRepositoryMock(): MockType<
   return {
     save: jest.fn(),
     create: jest.fn(),
+    findBy: jest.fn(),
   };
 }
 

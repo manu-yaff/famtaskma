@@ -35,4 +35,12 @@ export class ShoppingListsService {
       throw mapErrorToHttpException(error);
     }
   }
+
+  public async findAllByUserEmail(email: string) {
+    try {
+      return await this.shoppingListsRepository.findBy({ users: { email } });
+    } catch (error) {
+      throw mapErrorToHttpException(error);
+    }
+  }
 }
