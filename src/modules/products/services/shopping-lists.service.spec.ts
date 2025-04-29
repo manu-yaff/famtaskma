@@ -51,8 +51,9 @@ describe(ShoppingListsService.name, () => {
       // Arrange
       const payload: CreateShoppingListDto = {
         name: faker.word.words(),
-        userId: faker.string.uuid(),
       };
+
+      const userId = faker.string.uuid();
 
       const shoppingListMock = getShoppingListEntityMock();
       const userMock = getUserEntityMock();
@@ -64,7 +65,7 @@ describe(ShoppingListsService.name, () => {
       jest.spyOn(usersService, 'findOneByIdOrFail').mockResolvedValue(userMock);
 
       // Act
-      await shoppingListsService.create(payload);
+      await shoppingListsService.create(payload, userId);
 
       // Assert
       expect(shoppingListsRepository.save).toHaveBeenCalledWith({
@@ -77,8 +78,9 @@ describe(ShoppingListsService.name, () => {
       // Arrange
       const payload: CreateShoppingListDto = {
         name: faker.word.words(),
-        userId: faker.string.uuid(),
       };
+
+      const userId = faker.string.uuid();
 
       const shoppingListMock = getShoppingListEntityMock();
 
@@ -87,7 +89,7 @@ describe(ShoppingListsService.name, () => {
         .mockResolvedValue(shoppingListMock);
 
       // Act
-      const result = await shoppingListsService.create(payload);
+      const result = await shoppingListsService.create(payload, userId);
 
       // Assert
       expect(result).toBe(shoppingListMock);
@@ -97,8 +99,9 @@ describe(ShoppingListsService.name, () => {
       // Arrange
       const payload: CreateShoppingListDto = {
         name: faker.word.words(),
-        userId: faker.string.uuid(),
       };
+
+      const userId = faker.string.uuid();
 
       const databaseErrorMock = new Error('database error');
 
@@ -107,7 +110,7 @@ describe(ShoppingListsService.name, () => {
         .mockRejectedValue(databaseErrorMock);
 
       // Act
-      const promise = shoppingListsService.create(payload);
+      const promise = shoppingListsService.create(payload, userId);
 
       // Assert
       await expect(promise).rejects.toThrow(InternalServerErrorException);
@@ -117,11 +120,12 @@ describe(ShoppingListsService.name, () => {
       // Arrange
       const payload: CreateShoppingListDto = {
         name: faker.word.words(),
-        userId: faker.string.uuid(),
       };
 
+      const userId = faker.string.uuid();
+
       const userNotFoundExceptionMock = new EntityNotFoundError(User, {
-        id: payload.userId,
+        id: userId,
       });
 
       const shoppingListMock = getShoppingListEntityMock();
@@ -135,7 +139,7 @@ describe(ShoppingListsService.name, () => {
         .mockResolvedValue(shoppingListMock);
 
       // Act
-      const promise = shoppingListsService.create(payload);
+      const promise = shoppingListsService.create(payload, userId);
 
       // Assert
       await expect(promise).rejects.toThrow(NotFoundException);

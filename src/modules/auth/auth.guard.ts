@@ -28,9 +28,7 @@ export class AuthGuard implements CanActivate {
 
     if (isPublicRoute) return true;
 
-    const request = context
-      .switchToHttp()
-      .getRequest<Request & { user: JwtPayload }>();
+    const request = context.switchToHttp().getRequest<Request & JwtPayload>();
 
     const token = this.extractTokenFromHeader(request);
 
@@ -43,7 +41,7 @@ export class AuthGuard implements CanActivate {
         secret: this.configService.getOrThrow(CONFIG_KEYS.JWT_SECRET),
       });
 
-      request.user = payload;
+      request.user = payload.user;
     } catch {
       throw new UnauthorizedException();
     }

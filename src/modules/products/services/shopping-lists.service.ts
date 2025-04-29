@@ -15,9 +15,12 @@ export class ShoppingListsService {
     private readonly usersService: UsersService,
   ) {}
 
-  public async create(dto: CreateShoppingListDto): Promise<ShoppingList> {
+  public async create(
+    dto: CreateShoppingListDto,
+    userId: string,
+  ): Promise<ShoppingList> {
     try {
-      const user = await this.usersService.findOneByIdOrFail(dto.userId);
+      const user = await this.usersService.findOneByIdOrFail(userId);
 
       return await this.shoppingListsRepository.save({
         name: dto.name,

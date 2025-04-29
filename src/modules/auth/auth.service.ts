@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { CurrentUserFromToken } from 'src/modules/auth/decorators/current-user.decorator';
 import { SigninInputDto } from 'src/modules/auth/dto/signin-input.dto';
 import { SigninResponseDto } from 'src/modules/auth/dto/signin-response.dto';
 import { SignupResponseDto } from 'src/modules/auth/dto/signup-response.dto';
@@ -14,7 +15,7 @@ import { mapErrorToHttpException } from 'src/shared/error-helper';
 
 export interface JwtPayload {
   sub: string;
-  email: string;
+  user: CurrentUserFromToken;
 }
 
 @Injectable()
@@ -34,7 +35,10 @@ export class AuthService {
         throw new UnauthorizedException();
       }
 
-      const payload: JwtPayload = { sub: user.id, email: user.email };
+      const payload: JwtPayload = {
+        sub: user.id,
+        user: { id: user.id, email: user.email },
+      };
 
       return {
         accessToken: await this.jwtService.signAsync(payload),
