@@ -9,10 +9,14 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import * as http from 'node:http';
 import { AppModule } from 'src/app.module';
 import { ShoppingListsController } from 'src/modules/products/controllers/shopping-lists.controller';
+import { CreateShoppingListDto } from 'src/modules/products/dto/create-shopping-list-input.dto';
 import { Category } from 'src/modules/products/entities/category.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 import { ShoppingList } from 'src/modules/products/entities/shopping-list.entity';
-import { getShoppingListEntityMock } from 'src/modules/products/mocks/shopping-list.mock';
+import {
+  getCreateShoppingListDtoMock,
+  getShoppingListEntityMock,
+} from 'src/modules/products/mocks/shopping-list.mock';
 import { User } from 'src/modules/users/entities/user.entity';
 import { HttpExceptionFilter } from 'src/shared/exception-filter';
 import { setupUser } from 'src/shared/test/setup-helper-e2e';
@@ -99,6 +103,45 @@ describe(ShoppingListsController.name, () => {
 
       expect(body.data).toBeInstanceOf(Array<Product>);
       expect(body.data).toHaveLength(2);
+    });
+  });
+
+  describe.only(ShoppingListsController.prototype.create.name, () => {
+    it(`should return ${HttpStatus.BAD_REQUEST} when name is not provided`, async () => {
+      // Arrange
+      const loginResponse = await setupUser(nestServer);
+
+      // Act
+      const response = await request(nestServer)
+        .post(shoppingListsResource)
+        .set('Authorization', `Bearer ${loginResponse.data.accessToken}`)
+        .send({});
+
+      // Assert
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return the created shopping list', async () => {
+      // Arrange
+      const loginResponse = await setupUser(nestServer);
+      const dto: CreateShoppingListDto = getCreateShoppingListDtoMock();
+
+      // Act
+      const response = await request(nestServer)
+        .post(shoppingListsResource)
+        .set('Authorization', `Bearer ${loginResponse.data.accessToken}`)
+        .send(dto);
+
+      const { data } = response.body as ControllerResponse<ShoppingList>;
+
+      // Assert
+      expect(response.status).toBe(HttpStatus.CREATED);
+
+      expect(data.id).toEqual(expect.any(String));
+      expect(data.name).toBe(dto.name);
+      expect(data.users[0]).toEqual(expect.any(Array));
+      expect(data.createdAt).toEqual(expect.any(String));
+      expect(data.updatedAt).toEqual(expect.any(String));
     });
   });
 });
