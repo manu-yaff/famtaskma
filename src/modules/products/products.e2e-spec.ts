@@ -34,7 +34,6 @@ describe(ProductsController.name, () => {
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [
-        // AuthModule,
         ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env.test' }),
         DatabaseConfigModule,
         ProductsModule,
@@ -144,7 +143,6 @@ describe(ProductsController.name, () => {
       // Arrange
       const payload: CreateShoppingListDto = {
         name: faker.word.words(),
-        userId: 'invalid-user-id',
       };
 
       // Act
@@ -160,7 +158,6 @@ describe(ProductsController.name, () => {
       // Arrange
       const payload: CreateShoppingListDto = {
         name: faker.word.words(),
-        userId: faker.string.uuid(),
       };
 
       // Act
@@ -184,7 +181,6 @@ describe(ProductsController.name, () => {
 
       const payload: CreateShoppingListDto = {
         name: faker.word.words(),
-        userId: user.id,
       };
 
       // Act

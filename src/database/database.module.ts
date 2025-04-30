@@ -8,6 +8,9 @@ import { CONFIG_KEYS, DATABASE_TYPE } from 'src/constants';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
+        const isTestingEnv =
+          configService.getOrThrow(CONFIG_KEYS.ENVIRONMENT) === 'testing';
+
         return {
           type: DATABASE_TYPE,
           host: configService.getOrThrow(CONFIG_KEYS.DB_HOST),
@@ -15,11 +18,8 @@ import { CONFIG_KEYS, DATABASE_TYPE } from 'src/constants';
           database: configService.getOrThrow(CONFIG_KEYS.DB_NAME),
           username: configService.getOrThrow(CONFIG_KEYS.DB_USERNAME),
           password: configService.getOrThrow(CONFIG_KEYS.DB_PASSWORD),
-          logging: true,
-          synchronize:
-            configService.getOrThrow(CONFIG_KEYS.ENVIRONMENT) === 'testing'
-              ? true
-              : false,
+          logging: !isTestingEnv,
+          synchronize: isTestingEnv,
           autoLoadEntities: true,
         };
       },

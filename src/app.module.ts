@@ -9,6 +9,7 @@ import { UsersModule } from 'src/modules/users/users.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
     }),
     DatabaseConfigModule,
     UsersModule,

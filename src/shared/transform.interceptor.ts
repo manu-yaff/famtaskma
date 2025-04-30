@@ -7,6 +7,7 @@ import {
 import { map, Observable } from 'rxjs';
 
 export interface ControllerResponse<T> {
+  error: false;
   data: T;
 }
 
