@@ -1,23 +1,26 @@
 import {
   HttpStatus,
   INestApplication,
+  Logger,
   UnauthorizedException,
   ValidationPipe,
 } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import * as http from 'node:http';
-import { DatabaseConfigModule } from 'src/database/database.module';
+import { AppModule } from 'src/app.module';
 import { AuthController } from 'src/modules/auth/auth.controller';
-import { AuthModule } from 'src/modules/auth/auth.module';
-import { ProductsModule } from 'src/modules/products/products.module';
+import { SigninResponseDto } from 'src/modules/auth/dto/signin-response.dto';
 import { User } from 'src/modules/users/entities/user.entity';
 import {
   getCreateUserDto,
   getSiginDto,
 } from 'src/modules/users/mocks/user.mock';
-import { UsersModule } from 'src/modules/users/users.module';
+import { HttpExceptionFilter } from 'src/shared/exception-filter';
+import {
+  ControllerResponse,
+  TransformInterceptor,
+} from 'src/shared/transform.interceptor';
 import * as request from 'supertest';
 import { Repository } from 'typeorm';
 
@@ -28,17 +31,16 @@ describe(AuthController.name, () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [
-        ProductsModule,
-        UsersModule,
-        DatabaseConfigModule,
-        ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env.test' }),
-        AuthModule,
-      ],
+      imports: [AppModule],
     }).compile();
 
     app = moduleRef.createNestApplication();
+
+    const logger = new Logger();
+
     app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalFilters(new HttpExceptionFilter(logger));
+    app.useGlobalInterceptors(new TransformInterceptor());
 
     await app.init();
 
@@ -87,12 +89,12 @@ describe(AuthController.name, () => {
         .post(loginEndpoint)
         .send(userCredentials);
 
-      const body = response.body as Record<string, string>;
+      const body = response.body as ControllerResponse<SigninResponseDto>;
 
       // Assert
       expect(response.status).toBe(HttpStatus.OK);
-      expect(body.accessToken).toBeTruthy();
-      expect(body.accessToken).toEqual(expect.any(String));
+      expect(body.data.accessToken).toBeTruthy();
+      expect(body.data.accessToken).toEqual(expect.any(String));
     });
 
     describe('Invalid fields', () => {
@@ -137,13 +139,13 @@ describe(AuthController.name, () => {
         .post(registerEndpoint)
         .send(payload);
 
-      const body = response.body as User;
+      const { data } = response.body as ControllerResponse<User>;
 
       // Assert
       expect(response.status).toBe(HttpStatus.CREATED);
-      expect(body.name).toBe(payload.name);
-      expect(body.email).toBe(payload.email);
-      expect(body).not.toHaveProperty('password');
+      expect(data.name).toBe(payload.name);
+      expect(data.email).toBe(payload.email);
+      expect(data).not.toHaveProperty('password');
     });
 
     it(`should return ${HttpStatus.CONFLICT} when user email already exists`, async () => {
