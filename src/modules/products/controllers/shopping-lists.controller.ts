@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import {
   CurrentUser,
   CurrentUserFromToken,
@@ -21,5 +21,13 @@ export class ShoppingListsController {
   @Get()
   public findAll(@CurrentUser() user: CurrentUserFromToken) {
     return this.shoppingListsService.findAllByUserEmail(user.email);
+  }
+
+  @Get(':id')
+  public findOne(
+    @Param('id') id: string,
+    @CurrentUser() user: CurrentUserFromToken,
+  ) {
+    return this.shoppingListsService.findOneByIdAndUser(id, user.id);
   }
 }

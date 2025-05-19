@@ -15,6 +15,7 @@ export function getShoppingListEntityMock(
     createdAt: faker.date.soon(),
     updatedAt: faker.date.soon(),
     users: [],
+    items: [],
     ...overrides,
   };
 }
@@ -32,6 +33,7 @@ export function getShoppingListsRepositoryMock(): MockType<
     save: jest.fn(),
     create: jest.fn(),
     findBy: jest.fn(),
+    find: jest.fn(),
   };
 }
 

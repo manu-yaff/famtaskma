@@ -176,4 +176,45 @@ describe(ShoppingListsService.name, () => {
       await expect(promise).rejects.toThrow(InternalServerErrorException);
     });
   });
+
+  describe(ShoppingListsService.prototype.findOneByIdAndUser.name, () => {
+    it(`should throw ${NotFoundException.name} when shopping list id does not exist`, async () => {
+      // Arrange
+      const mockListId = faker.string.uuid();
+      const mockUserId = faker.string.uuid();
+
+      jest
+        .spyOn(shoppingListsRepository, 'find')
+        .mockRejectedValue(
+          new EntityNotFoundError(ShoppingList, { id: mockListId }),
+        );
+
+      // Act
+      const promise = shoppingListsService.findOneByIdAndUser(
+        mockListId,
+        mockUserId,
+      );
+
+      // Assert
+      await expect(promise).rejects.toThrow(NotFoundException);
+    });
+
+    it('should return the shopping list along with the items', async () => {
+      // Arrange
+      const mockListId = faker.string.uuid();
+      const mockUserId = faker.string.uuid();
+
+      // Act
+      await shoppingListsService.findOneByIdAndUser(mockListId, mockUserId);
+
+      // Assert
+      expect(shoppingListsRepository.find).toHaveBeenCalledWith({
+        where: {
+          id: mockListId,
+          users: { id: mockUserId },
+        },
+        relations: ['items'],
+      });
+    });
+  });
 });

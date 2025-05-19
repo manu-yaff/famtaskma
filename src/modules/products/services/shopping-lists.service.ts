@@ -46,4 +46,18 @@ export class ShoppingListsService {
       throw mapErrorToHttpException(error);
     }
   }
+
+  public async findOneByIdAndUser(id: string, userId: string) {
+    try {
+      return await this.shoppingListsRepository.find({
+        where: {
+          id,
+          users: { id: userId },
+        },
+        relations: ['items'],
+      });
+    } catch (error) {
+      throw mapErrorToHttpException(error);
+    }
+  }
 }

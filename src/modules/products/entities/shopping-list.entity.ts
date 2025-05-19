@@ -1,3 +1,4 @@
+import { ShoppingItem } from 'src/modules/products/entities/shopping-item.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import {
   Column,
@@ -5,6 +6,7 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -52,4 +54,7 @@ export class ShoppingList {
     },
   })
   users: User[];
+
+  @OneToMany(() => ShoppingItem, (item) => item.shoppingList)
+  items: ShoppingItem[];
 }
