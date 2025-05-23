@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker/.';
 import { NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -77,13 +78,14 @@ describe(ShoppingItemsService.name, () => {
     it('should return the created shopping item', async () => {
       // Arrange
       const shoppingListItemMock = getShoppingItemEntityMock();
+      const userId = faker.string.uuid();
 
       jest
         .spyOn(shoppingItemsRepository, 'save')
         .mockResolvedValue(shoppingListItemMock);
 
       // Act
-      const result = await shoppingListItemsService.create(dto);
+      const result = await shoppingListItemsService.create(dto, userId);
 
       // Assert
       expect(result).toEqual(shoppingListItemMock);
@@ -92,6 +94,7 @@ describe(ShoppingItemsService.name, () => {
     it(`should call ${ShoppingItem.name} ${Repository.prototype.save.name}`, async () => {
       // Arrange
       const dto: CreateShoppingItemDto = getCreateShoppingItemDtoMock();
+      const userId = faker.string.uuid();
 
       const shoppingItemMock = getShoppingItemEntityMock({
         quantity: dto.quantity,
@@ -101,7 +104,7 @@ describe(ShoppingItemsService.name, () => {
         status: ShoppingItemStatus.Todo,
         shoppingList: getShoppingListEntityMock({ id: dto.shoppingListId }),
         product: getProductEntityMock({ id: dto.productId }),
-        user: getUserEntityMock({ id: dto.userId }),
+        user: getUserEntityMock({ id: userId }),
       });
 
       jest
@@ -109,7 +112,7 @@ describe(ShoppingItemsService.name, () => {
         .mockReturnValue(shoppingItemMock);
 
       // Act
-      await shoppingListItemsService.create(dto);
+      await shoppingListItemsService.create(dto, userId);
 
       // Assert
       expect(shoppingItemsRepository.save).toHaveBeenCalledWith(
@@ -121,13 +124,14 @@ describe(ShoppingItemsService.name, () => {
       // Arrange
       const dto: CreateShoppingItemDto = getCreateShoppingItemDtoMock();
       const shoppingItemMock = getShoppingItemEntityMock();
+      const userId = faker.string.uuid();
 
       jest
         .spyOn(shoppingItemsRepository, 'create')
         .mockReturnValue(shoppingItemMock);
 
       // Act
-      await shoppingListItemsService.create(dto);
+      await shoppingListItemsService.create(dto, userId);
 
       // Assert
       expect(shoppingItemsRepository.save).toHaveBeenCalledWith(
@@ -139,6 +143,7 @@ describe(ShoppingItemsService.name, () => {
     it(`should throw ${NotFoundException.name} when user is not found`, async () => {
       // Arrange
       const dto: CreateShoppingItemDto = getCreateShoppingItemDtoMock();
+      const userId = faker.string.uuid();
 
       const userNotFoundException = new NotFoundException();
 
@@ -147,7 +152,7 @@ describe(ShoppingItemsService.name, () => {
         .mockRejectedValue(userNotFoundException);
 
       // Act
-      const promise = shoppingListItemsService.create(dto);
+      const promise = shoppingListItemsService.create(dto, userId);
 
       // Assert
       await expect(promise).rejects.toThrow(NotFoundException);
@@ -156,6 +161,7 @@ describe(ShoppingItemsService.name, () => {
     it(`should throw ${NotFoundException.name} when product is not found`, async () => {
       // Arrange
       const dto: CreateShoppingItemDto = getCreateShoppingItemDtoMock();
+      const userId = faker.string.uuid();
 
       const productNotFoundException = new NotFoundException();
 
@@ -164,7 +170,7 @@ describe(ShoppingItemsService.name, () => {
         .mockRejectedValue(productNotFoundException);
 
       // Act
-      const promise = shoppingListItemsService.create(dto);
+      const promise = shoppingListItemsService.create(dto, userId);
 
       // Assert
       await expect(promise).rejects.toThrow(NotFoundException);
@@ -173,6 +179,7 @@ describe(ShoppingItemsService.name, () => {
     it(`should throw ${NotFoundException.name} when list is not found`, async () => {
       // Arrange
       const dto: CreateShoppingItemDto = getCreateShoppingItemDtoMock();
+      const userId = faker.string.uuid();
 
       const shoppingListNotFoundError = new NotFoundException();
 
@@ -181,7 +188,7 @@ describe(ShoppingItemsService.name, () => {
         .mockRejectedValue(shoppingListNotFoundError);
 
       // Act
-      const promise = shoppingListItemsService.create(dto);
+      const promise = shoppingListItemsService.create(dto, userId);
 
       // Assert
       await expect(promise).rejects.toThrow(NotFoundException);
