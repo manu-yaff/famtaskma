@@ -49,7 +49,7 @@ export class ShoppingListsService {
 
   public async findOneByIdAndUser(id: string, userId: string) {
     try {
-      return await this.shoppingListsRepository.find({
+      return await this.shoppingListsRepository.findOne({
         where: {
           id,
           users: { id: userId },

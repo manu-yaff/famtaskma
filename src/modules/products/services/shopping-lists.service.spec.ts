@@ -184,7 +184,7 @@ describe(ShoppingListsService.name, () => {
       const mockUserId = faker.string.uuid();
 
       jest
-        .spyOn(shoppingListsRepository, 'find')
+        .spyOn(shoppingListsRepository, 'findOne')
         .mockRejectedValue(
           new EntityNotFoundError(ShoppingList, { id: mockListId }),
         );
@@ -204,11 +204,13 @@ describe(ShoppingListsService.name, () => {
       const mockListId = faker.string.uuid();
       const mockUserId = faker.string.uuid();
 
+      jest.spyOn(shoppingListsRepository, 'findOne');
+
       // Act
       await shoppingListsService.findOneByIdAndUser(mockListId, mockUserId);
 
       // Assert
-      expect(shoppingListsRepository.find).toHaveBeenCalledWith({
+      expect(shoppingListsRepository.findOne).toHaveBeenCalledWith({
         where: {
           id: mockListId,
           users: { id: mockUserId },

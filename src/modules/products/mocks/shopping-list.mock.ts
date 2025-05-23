@@ -33,7 +33,7 @@ export function getShoppingListsRepositoryMock(): MockType<
     save: jest.fn(),
     create: jest.fn(),
     findBy: jest.fn(),
-    find: jest.fn(),
+    findOne: jest.fn(),
   };
 }
 

@@ -38,7 +38,6 @@ export function getCreateShoppingItemDtoMock(
     location: faker.location.direction(),
     shoppingListId: faker.string.uuid(),
     productId: faker.string.uuid(),
-    userId: faker.string.uuid(),
     ...overrides,
   };
 }

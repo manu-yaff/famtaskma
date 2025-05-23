@@ -9,13 +9,6 @@ export class CreateShoppingItemDto extends PickType(ShoppingItem, [
   'notes',
 ]) {
   /**
-   * User id
-   * @example 01080f05-2900-40d7-9627-e7085a26a247
-   */
-  @IsUUID()
-  userId: string;
-
-  /**
    * Product id
    * @example 01080f05-2900-40d7-9627-e7085a26a247
    */

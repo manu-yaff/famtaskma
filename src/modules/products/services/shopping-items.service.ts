@@ -22,9 +22,10 @@ export class ShoppingItemsService {
     private readonly repository: Repository<ShoppingItem>,
   ) {}
 
-  public async create(dto: CreateShoppingItemDto) {
+  public async create(dto: CreateShoppingItemDto, userId: string) {
     try {
-      await this.usersService.findOneByIdOrFail(dto.userId);
+      // TODO: send this request concurrently
+      await this.usersService.findOneByIdOrFail(userId);
       await this.productsService.findOneByIdOrFail(dto.productId);
       await this.shoppingListsService.findOneByIdOrFail(dto.shoppingListId);
 
@@ -36,7 +37,7 @@ export class ShoppingItemsService {
         status: ShoppingItemStatus.Todo,
         shoppingList: { id: dto.shoppingListId },
         product: { id: dto.productId },
-        user: { id: dto.userId },
+        user: { id: userId },
       });
 
       return await this.repository.save(shoppingItem);
