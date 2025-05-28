@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoriesController } from 'src/modules/products/controllers/categories.controller';
 import { ProductsController } from 'src/modules/products/controllers/products.controller';
-import { ShoppingItemController } from 'src/modules/products/controllers/shopping-item.controller';
+import { ShoppingItemController } from 'src/modules/products/controllers/shopping-items.controller';
 import { ShoppingListsController } from 'src/modules/products/controllers/shopping-lists.controller';
 import { Category } from 'src/modules/products/entities/category.entity';
 import { Product } from 'src/modules/products/entities/product.entity';

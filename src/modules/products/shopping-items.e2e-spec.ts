@@ -5,7 +5,7 @@ import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import * as http from 'node:http';
 import { DatabaseConfigModule } from 'src/database/database.module';
-import { ShoppingItemController } from 'src/modules/products/controllers/shopping-item.controller';
+import { ShoppingItemController } from 'src/modules/products/controllers/shopping-items.controller';
 import { CreateShoppingItemDto } from 'src/modules/products/dto/create-shopping-item-input.dto';
 import { Category } from 'src/modules/products/entities/category.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
